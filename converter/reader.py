@@ -8,4 +8,4 @@ def read_xml(filepath: str) -> str:
 
 
 def read_and_convert_to_dict(filepath: str) -> dict:
-    return xmltodict.parse(read_xml(filepath), process_namespaces=True)
+    return xmltodict.parse(read_xml(filepath))
