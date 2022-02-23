@@ -1,1 +1,6 @@
 xmltodict
+pymongo
+loguru
+
+-e shared-file-format/python
+-e .
