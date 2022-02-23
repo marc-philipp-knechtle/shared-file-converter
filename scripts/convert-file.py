@@ -1,7 +1,5 @@
 import argparse
 import sys
-import converter
-
 from argparse import Namespace
 
 from loguru import logger
@@ -36,8 +34,8 @@ def parse_arguments() -> Namespace:
 
 
 def check_args(args: Namespace):
-    # todo
-    assert args.output_file is not None
+    assert args.input_file is not None
+    assert args.output_file is not None or args.db_connection is not None
 
 
 def main(args: Namespace):
