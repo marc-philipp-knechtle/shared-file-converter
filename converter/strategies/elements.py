@@ -1,4 +1,4 @@
-from converter.abstract_elements import ConversionStrategy
+from converter.elements import ConversionStrategy
 
 
 class PageXMLStrategy(ConversionStrategy):

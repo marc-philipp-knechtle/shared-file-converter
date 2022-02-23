@@ -47,7 +47,7 @@ def main(args: Namespace):
 
     # todo read file and convert to dict
     content_to_dict: dict = reader.read_and_convert_to_dict(input_filepath)
-    logger.info("Started processing on file with name: [" + input_filepath + "]")
+    logger.info("Started processing on file: [" + input_filepath + "]")
 
     # todo process dict to shared-file-format
 
