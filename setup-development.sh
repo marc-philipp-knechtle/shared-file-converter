@@ -9,8 +9,7 @@ if [ ! -d "$DIR" ]; then
   exit 1
 fi
 
-cd shared-file-format/python || return 1
-pip install -e .
+pip install -e shared-file-format/python
 
 PIP_LIST=$(pip list)
 DOCRECSON='docrecjson'
