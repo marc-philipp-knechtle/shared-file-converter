@@ -1,8 +1,14 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 
 class ConversionStrategy(ABC):
-    pass
+    @abstractmethod
+    def add_baselines(self):
+        pass
+
+    @abstractmethod
+    def add_lines(self):
+        pass
 
 
 class ConversionContext:
