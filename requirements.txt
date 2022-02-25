@@ -1,6 +1,7 @@
 xmltodict
 pymongo
 loguru
+lxml
 
 -e shared-file-format/python
 -e .
