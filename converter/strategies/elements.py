@@ -11,7 +11,15 @@ class ConversionStrategy(ABC):
         pass
 
 
-class PageXMLStrategy(ConversionStrategy):
+class PageXMLStrategyObjectify(ConversionStrategy):
+    def add_baselines(self):
+        pass
+
+    def add_lines(self):
+        pass
+
+
+class PageXMLStrategyPyXB(ConversionStrategy):
     def add_baselines(self):
         pass
 

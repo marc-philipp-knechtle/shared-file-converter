@@ -6,7 +6,7 @@ from enum import Enum
 from docrecjson.elements import Document
 from loguru import logger
 
-from converter.strategies.elements import PageXMLStrategy, ConversionStrategy
+from converter.strategies.elements import PageXMLStrategyObjectify, ConversionStrategy
 
 
 # todo it may be necessary to differentiate between different PageXML versions
@@ -36,9 +36,7 @@ class SharedDocument:
 
         self.previous_type = _get_type()
 
-        print(json.dumps(previous_representation, indent=4))
-
-        context: ConversionContext = ConversionContext(PageXMLStrategy())
+        context: ConversionContext = ConversionContext(PageXMLStrategyObjectify())
         context.convert()
 
 
