@@ -3,9 +3,11 @@ import sys
 from argparse import Namespace
 
 from loguru import logger
+from lxml import objectify
+from lxml.objectify import ObjectifiedElement
 
-from converter.validator import reader
 from converter.elements import SharedDocument
+from converter.validator import reader
 
 # remove the default loguru logger
 logger.remove()
@@ -46,9 +48,24 @@ def main(args: Namespace):
     db_connection: str = args.db_connection
     db_collection: str = args.db_collection
 
+    logger.info("Started processing on file: [" + input_filepath + "]")
+
     # todo read file and convert to dict
     content_to_dict: dict = reader.read_and_convert_to_dict(input_filepath)
-    logger.info("Started processing on file: [" + input_filepath + "]")
+    xml_object = reader.read_and_convert_to_object(input_filepath)
+
+    print("instance?:")
+    print(isinstance(xml_object.getroot(), objectify.ObjectifiedElement))
+    print(str(xml_object.getroot()))
+    # print(str(objectify.dump(xml_object.getroot())))
+    # objectify.xsiannotate(xml_object)
+    objectify.deannotate(xml_object)
+    print(str(objectify.dump(xml_object.getroot())))
+
+    print("Direct Access attempt:")
+    print(str(xml_object.getroot().Metadata.Creator))
+    print(str(xml_object.getroot().Page.TextRegion[0].Coords.get("points")))
+    print(type(xml_object.getroot().Page.TextRegion[0].Coords.get("points")))
 
     doc: SharedDocument = SharedDocument(input_filepath, content_to_dict)
 
