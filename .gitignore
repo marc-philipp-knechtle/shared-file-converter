@@ -1,2 +1,3 @@
 .venv
 converter.egg-info
+errors.log
