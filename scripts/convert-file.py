@@ -4,7 +4,8 @@ from argparse import Namespace
 
 from loguru import logger
 
-from converter import reader
+from converter.validator import reader
+from converter.elements import SharedDocument
 
 # remove the default loguru logger
 logger.remove()
@@ -48,6 +49,8 @@ def main(args: Namespace):
     # todo read file and convert to dict
     content_to_dict: dict = reader.read_and_convert_to_dict(input_filepath)
     logger.info("Started processing on file: [" + input_filepath + "]")
+
+    doc: SharedDocument = SharedDocument(input_filepath, content_to_dict)
 
     # todo process dict to shared-file-format
 
