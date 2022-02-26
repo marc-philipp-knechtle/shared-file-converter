@@ -20,13 +20,14 @@ def _get_type() -> SupportedTypes:
 
 
 @dataclass
-class SharedDocument:
+class ConverterDocument:
     filepath: str
     filename: str
     previous_type: SupportedTypes
 
     original: str
     tmp_type = None
+    _shared_file_format_document: Document
 
     def __init__(self, filepath: str, original, tmp_type):
         self.filepath = filepath
@@ -36,15 +37,22 @@ class SharedDocument:
         self.original = original
         self.tmp_type = tmp_type
 
+    @property
+    def _shared_file_format_document(self) -> Document:
+        return self._shared_file_format_document
+
+    @_shared_file_format_document.setter
+    def _shared_file_format_document(self, shared_file_format_document: Document):
+        self._shared_file_format_document = shared_file_format_document
+
 
 class ConversionContext:
     _strategy: ConversionStrategy
-    _original = None
-    _document: Document
+    _converter_doc: ConverterDocument
 
-    def __init__(self, strategy: ConversionStrategy, original):
+    def __init__(self, strategy: ConversionStrategy, doc: ConverterDocument):
         self._strategy = strategy
-        self._original = original
+        self._converter_doc = doc
 
     @property
     def strategy(self) -> ConversionStrategy:
@@ -55,7 +63,7 @@ class ConversionContext:
         self._strategy = strategy
 
     def convert(self) -> Document:
-        _document = self._strategy.initialize(self._original)
-        _document = self._strategy.add_lines(_document, self._original)
-        _document = self._strategy.add_baselines(_document, self._original)
-        return _document
+        self._converter_doc = self._strategy.initialize(self._converter_doc)
+        self._converter_doc = self._strategy.add_lines(self._converter_doc)
+        self._converter_doc = self._strategy.add_baselines(self._converter_doc)
+        return self._converter_doc._shared_file_format_document

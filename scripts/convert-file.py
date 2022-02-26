@@ -2,14 +2,13 @@ import argparse
 import sys
 from argparse import Namespace
 
-from docrecjson.elements import Document
 from loguru import logger
-from lxml import objectify
 
 import converter.strategies.models as models
-from converter.elements import SharedDocument, ConversionContext
+from converter.elements import ConverterDocument, ConversionContext
 from converter.strategies.elements import PageXMLStrategyPyXB
 from converter.validator import reader
+from docrecjson.elements import Document
 
 # remove the default loguru logger
 logger.remove()
@@ -52,10 +51,11 @@ def main(args: Namespace):
 
     # todo read file and convert to dict
 
-    doc: SharedDocument = SharedDocument(input_filepath, reader.read_xml(input_filepath))
+    doc: ConverterDocument = ConverterDocument(input_filepath, reader.read_xml(input_filepath),
+                                               tmp_type=models.CreateFromDocument(reader.read_xml(input_filepath)))
 
     logger.info("Started processing on file: [" + input_filepath + "]")
-    context = ConversionContext(PageXMLStrategyPyXB(), models.CreateFromDocument())
+    context = ConversionContext(PageXMLStrategyPyXB(), doc)
     document: Document = context.convert()
 
     # content_to_dict: dict = reader.read_and_convert_to_dict(input_filepath)
