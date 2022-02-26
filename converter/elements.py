@@ -1,12 +1,11 @@
-import json
-from abc import ABC, abstractmethod
+import os.path
 from dataclasses import dataclass
 from enum import Enum
 
-from docrecjson.elements import Document
 from loguru import logger
 
-from converter.strategies.elements import PageXMLStrategyObjectify, ConversionStrategy
+from converter.strategies.elements import ConversionStrategy
+from docrecjson.elements import Document
 
 
 # todo it may be necessary to differentiate between different PageXML versions
@@ -24,27 +23,28 @@ def _get_type() -> SupportedTypes:
 class SharedDocument:
     filepath: str
     filename: str
-    document: Document
-
-    previous_representation: dict
-    previous_representation_removed = None
     previous_type: SupportedTypes
 
-    def __init__(self, filepath: str, previous_representation):
-        self.filepath = filepath
-        self.previous_representation = previous_representation
+    original: str
+    tmp_type = None
 
+    def __init__(self, filepath: str, original, tmp_type):
+        self.filepath = filepath
+        self.filename = os.path.basename(filepath)
         self.previous_type = _get_type()
 
-        context: ConversionContext = ConversionContext(PageXMLStrategyObjectify())
-        context.convert()
+        self.original = original
+        self.tmp_type = tmp_type
 
 
 class ConversionContext:
     _strategy: ConversionStrategy
+    _original = None
+    _document: Document
 
-    def __init__(self, strategy: ConversionStrategy):
+    def __init__(self, strategy: ConversionStrategy, original):
         self._strategy = strategy
+        self._original = original
 
     @property
     def strategy(self) -> ConversionStrategy:
@@ -54,6 +54,8 @@ class ConversionContext:
     def strategy(self, strategy: ConversionStrategy):
         self._strategy = strategy
 
-    def convert(self):
-        self._strategy.add_lines()
-        self._strategy.add_baselines()
+    def convert(self) -> Document:
+        _document = self._strategy.initialize(self._original)
+        _document = self._strategy.add_lines(_document, self._original)
+        _document = self._strategy.add_baselines(_document, self._original)
+        return _document
