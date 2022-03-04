@@ -94,7 +94,7 @@ class PageXML2017StrategyGenerateDS(ConversionStrategy):
     But I'll leave this approach in this repository for an eventual later evaluation.
     """
 
-    def initialize(self, original: ConverterDocument) -> ConverterDocument:
+    def initialize(self, original: ConverterDocument):
         print("hello there from initialyze")
         generate_ds_object = original.tmp_type
         print(generate_ds_object.Metadata.Creator)
