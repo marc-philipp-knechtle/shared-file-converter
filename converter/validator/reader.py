@@ -12,6 +12,8 @@ def read_xml(filepath: str) -> str:
                                            "/home/makn/Downloads/2017-07-15.xsd")
         if not validation_result:
             logger.error("The read XML File does not match to the specified schema.")
+        else:
+            logger.info("[" + filepath + "] validated successfully.")
         return content
 
 
@@ -21,6 +23,8 @@ def read_and_convert_to_object(filepath: str):
                                        "/home/makn/Downloads/2017-07-15.xsd")
     if not validation_result:
         logger.error("The read XML File does not match to the specified schema.")
+    else:
+        logger.info("[" + filepath + "] validated successfully.")
     return objectify.parse(filepath)
     # return objectify.fromstring(read_xml(filepath))
 
@@ -30,6 +34,7 @@ def read_and_convert_to_dict(filepath: str) -> dict:
 
 
 def validate(xml_path: str, xsd_path: str) -> bool:
+    logger.info("Validation started on: [" + xml_path + "] with schema: [" + xsd_path + "]")
     xmlschema_doc = etree.parse(os.path.join(xsd_path))
     xmlschema = etree.XMLSchema(xmlschema_doc)
 
