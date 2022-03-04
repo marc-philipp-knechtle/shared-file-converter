@@ -5,7 +5,7 @@ from enum import Enum
 
 from loguru import logger
 
-from converter.strategies.models import PcGtsType
+from converter.strategies.page_xml.py_xb_2017 import PcGtsType
 from docrecjson.elements import Document
 
 
@@ -65,7 +65,7 @@ class ConversionStrategy(ABC):
         pass
 
 
-class PageXMLStrategyObjectify(ConversionStrategy):
+class PageXML2017StrategyObjectify(ConversionStrategy):
     def initialize(self, original: ConverterDocument) -> ConverterDocument:
         pass
 
@@ -79,11 +79,29 @@ class PageXMLStrategyObjectify(ConversionStrategy):
         pass
 
 
-class PageXMLStrategyPyXB(ConversionStrategy):
+class PageXML2017StrategyPyXB(ConversionStrategy):
     def initialize(self, original: ConverterDocument) -> ConverterDocument:
         print("hello there from pagexmlpyxb")
+        document: Document = Document(version="", filename="", original_image_size="", content="")
         pyxb_object: PcGtsType = original.tmp_type
         print(pyxb_object.Metadata.Creator)
+
+        original.shared_file_format_document = document
+        return original
+
+    def add_metadata(self, original: ConverterDocument) -> ConverterDocument:
+        pass
+
+    def add_baselines(self, converter_doc: ConverterDocument) -> ConverterDocument:
+        pass
+
+    def add_lines(self, converter_doc: ConverterDocument) -> ConverterDocument:
+        pass
+
+
+class PageXML2019Strategy(ConversionStrategy):
+
+    def initialize(self, original: ConverterDocument) -> ConverterDocument:
         pass
 
     def add_metadata(self, original: ConverterDocument) -> ConverterDocument:
