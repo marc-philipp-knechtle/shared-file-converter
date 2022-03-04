@@ -73,6 +73,15 @@ def main(args: Namespace):
     # print(str(xml_object.getroot().Page.TextRegion[0].Coords.get("points")))
     # print(type(xml_object.getroot().Page.TextRegion[0].Coords.get("points")))
 
+    # # = ObjectfiedElement?
+    # def read_and_convert_to_object(filepath: str):
+    #     # if not validation_result:
+    #     #     logger.error("The read XML File does not match to the specified schema.")
+    #     # else:
+    #     #     logger.info("[" + filepath + "] validated successfully.")
+    #     return objectify.parse(filepath)
+    #     # return objectify.fromstring(read_xml(filepath))
+
     # todo write to file or database
 
 
