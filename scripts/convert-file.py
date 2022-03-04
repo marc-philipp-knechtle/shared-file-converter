@@ -4,9 +4,8 @@ from argparse import Namespace
 
 from loguru import logger
 
-import converter.strategies.models as models
-from converter.elements import ConverterDocument, ConversionContext
-from converter.strategies.elements import PageXMLStrategyPyXB
+import converter.strategies.page_xml.py_xb_2017 as models
+from converter.elements import ConverterDocument, ConversionContext, PageXML2017StrategyPyXB
 from converter.validator import reader
 from docrecjson.elements import Document
 
@@ -51,12 +50,7 @@ def main(args: Namespace):
 
     # todo read file and convert to dict
 
-    doc: ConverterDocument = ConverterDocument(input_filepath, reader.read_xml(input_filepath),
-                                               tmp_type=models.CreateFromDocument(reader.read_xml(input_filepath)))
-
-    logger.info("Started processing on file: [" + input_filepath + "]")
-    context = ConversionContext(PageXMLStrategyPyXB(), doc)
-    document: Document = context.convert()
+    test_py_xb_conversion(input_filepath)
 
     # content_to_dict: dict = reader.read_and_convert_to_dict(input_filepath)
     # xml_object = reader.read_and_convert_to_object(input_filepath)
@@ -74,6 +68,18 @@ def main(args: Namespace):
     # print(type(xml_object.getroot().Page.TextRegion[0].Coords.get("points")))
 
     # todo write to file or database
+
+
+def test_py_xb_conversion(input_filepath):
+    doc: ConverterDocument = ConverterDocument(input_filepath, reader.read_xml(input_filepath),
+                                               tmp_type=models.CreateFromDocument(reader.read_xml(input_filepath)))
+    logger.info("Started processing on file: [" + input_filepath + "]")
+    context = ConversionContext(PageXML2017StrategyPyXB(), doc)
+    document: Document = context.convert()
+
+
+def test_generate_ds_conversion(input_filepath):
+    pass
 
 
 if __name__ == "__main__":
