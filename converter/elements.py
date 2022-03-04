@@ -38,11 +38,11 @@ class ConverterDocument:
         self.tmp_type = tmp_type
 
     @property
-    def _shared_file_format_document(self) -> Document:
+    def shared_file_format_document(self) -> Document:
         return self._shared_file_format_document
 
-    @_shared_file_format_document.setter
-    def _shared_file_format_document(self, shared_file_format_document: Document):
+    @shared_file_format_document.setter
+    def shared_file_format_document(self, shared_file_format_document: Document):
         self._shared_file_format_document = shared_file_format_document
 
 
@@ -66,4 +66,4 @@ class ConversionContext:
         self._converter_doc = self._strategy.initialize(self._converter_doc)
         self._converter_doc = self._strategy.add_lines(self._converter_doc)
         self._converter_doc = self._strategy.add_baselines(self._converter_doc)
-        return self._converter_doc._shared_file_format_document
+        return self._converter_doc.shared_file_format_document
