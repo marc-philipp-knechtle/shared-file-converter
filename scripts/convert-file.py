@@ -4,12 +4,14 @@ from argparse import Namespace
 
 from loguru import logger
 
-import converter.strategies.page_xml.py_xb_2017 as models
-from converter.elements import ConverterDocument, ConversionContext, PageXML2017StrategyPyXB
+import converter.strategies.page_xml.generate_ds_2017 as generate_ds_2017
+import converter.strategies.page_xml.py_xb_2017 as py_xb_2017
+from converter.elements import ConverterDocument, ConversionContext, PageXML2017StrategyPyXB, \
+    PageXML2017StrategyGenerateDS
 from converter.validator import reader
+# remove the default loguru logger
 from docrecjson.elements import Document
 
-# remove the default loguru logger
 logger.remove()
 # add new custom loggers
 logger.add(sys.stdout, level='INFO')
@@ -50,7 +52,8 @@ def main(args: Namespace):
 
     # todo read file and convert to dict
 
-    test_py_xb_conversion(input_filepath)
+    # test_py_xb_conversion(input_filepath)
+    test_generate_ds_conversion(input_filepath)
 
     # content_to_dict: dict = reader.read_and_convert_to_dict(input_filepath)
     # xml_object = reader.read_and_convert_to_object(input_filepath)
@@ -72,14 +75,19 @@ def main(args: Namespace):
 
 def test_py_xb_conversion(input_filepath):
     doc: ConverterDocument = ConverterDocument(input_filepath, reader.read_xml(input_filepath),
-                                               tmp_type=models.CreateFromDocument(reader.read_xml(input_filepath)))
+                                               tmp_type=py_xb_2017.CreateFromDocument(reader.read_xml(input_filepath)))
     logger.info("Started processing on file: [" + input_filepath + "]")
     context = ConversionContext(PageXML2017StrategyPyXB(), doc)
-    document: Document = context.convert()
+    # document: Document = context.convert()
 
 
 def test_generate_ds_conversion(input_filepath):
-    pass
+    xml: str = reader.read_xml(input_filepath)
+    doc: ConverterDocument = ConverterDocument(input_filepath, xml,
+                                               tmp_type=generate_ds_2017.parse(input_filepath, silence=True))
+    logger.info("Started processing on file: [" + input_filepath + "]")
+    context = ConversionContext(PageXML2017StrategyGenerateDS(), doc)
+    document: Document = context.convert()
 
 
 if __name__ == "__main__":

@@ -99,6 +99,29 @@ class PageXML2017StrategyPyXB(ConversionStrategy):
         pass
 
 
+class PageXML2017StrategyGenerateDS(ConversionStrategy):
+    """
+    The GenerateDS handling seems to be very similar to the PyXB handling, if not identical.
+    I will therefore continue implementing the desired functionality with PyXB, not because of any knowledge of the
+    inner workings, but only because of preference.
+    But I'll leave this approach in this repository for an eventual later evaluation.
+    """
+    def initialize(self, original: ConverterDocument) -> ConverterDocument:
+        print("hello there from initialyze")
+        generate_ds_object = original.tmp_type
+        print(generate_ds_object.Metadata.Creator)
+        pass
+
+    def add_metadata(self, original: ConverterDocument) -> ConverterDocument:
+        pass
+
+    def add_baselines(self, converter_doc: ConverterDocument) -> ConverterDocument:
+        pass
+
+    def add_lines(self, converter_doc: ConverterDocument) -> ConverterDocument:
+        pass
+
+
 class PageXML2019Strategy(ConversionStrategy):
 
     def initialize(self, original: ConverterDocument) -> ConverterDocument:
