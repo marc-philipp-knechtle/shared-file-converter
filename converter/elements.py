@@ -5,6 +5,7 @@ from enum import Enum
 
 from loguru import logger
 
+from converter.strategies.models import PcGtsType
 from docrecjson.elements import Document
 
 
@@ -48,7 +49,11 @@ class ConverterDocument:
 
 class ConversionStrategy(ABC):
     @abstractmethod
-    def initialize(self, original) -> ConverterDocument:
+    def initialize(self, original: ConverterDocument) -> ConverterDocument:
+        pass
+
+    @abstractmethod
+    def add_metadata(self, original: ConverterDocument) -> ConverterDocument:
         pass
 
     @abstractmethod
@@ -61,10 +66,13 @@ class ConversionStrategy(ABC):
 
 
 class PageXMLStrategyObjectify(ConversionStrategy):
-    def initialize(self, original) -> ConverterDocument:
+    def initialize(self, original: ConverterDocument) -> ConverterDocument:
         pass
 
     def add_baselines(self, converter_doc: ConverterDocument) -> ConverterDocument:
+        pass
+
+    def add_metadata(self, original: ConverterDocument) -> ConverterDocument:
         pass
 
     def add_lines(self, converter_doc: ConverterDocument) -> ConverterDocument:
@@ -72,7 +80,13 @@ class PageXMLStrategyObjectify(ConversionStrategy):
 
 
 class PageXMLStrategyPyXB(ConversionStrategy):
-    def initialize(self, original) -> ConverterDocument:
+    def initialize(self, original: ConverterDocument) -> ConverterDocument:
+        print("hello there from pagexmlpyxb")
+        pyxb_object: PcGtsType = original.tmp_type
+        print(pyxb_object.Metadata.Creator)
+        pass
+
+    def add_metadata(self, original: ConverterDocument) -> ConverterDocument:
         pass
 
     def add_baselines(self, converter_doc: ConverterDocument) -> ConverterDocument:
@@ -88,6 +102,7 @@ class ConversionContext:
 
     def __init__(self, strategy: ConversionStrategy, doc: ConverterDocument):
         self._strategy = strategy
+        logger.info("Loaded strategy: " + self._strategy.__class__.__name__)
         self._converter_doc = doc
 
     @property
