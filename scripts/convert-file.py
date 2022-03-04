@@ -4,13 +4,7 @@ from argparse import Namespace
 
 from loguru import logger
 
-import converter.strategies.page_xml.generate_ds_2017 as generate_ds_2017
-import converter.strategies.page_xml.py_xb_2017 as py_xb_2017
-from converter.elements import ConverterDocument, ConversionContext, PageXML2017StrategyPyXB, \
-    PageXML2017StrategyGenerateDS
-from converter.validator import reader
 from converter.validator.reader import handle_incoming_file
-from docrecjson.elements import Document
 
 # remove the default loguru logger
 logger.remove()
@@ -83,14 +77,6 @@ def main(args: Namespace):
     #     # return objectify.fromstring(read_xml(filepath))
 
     # todo write to file or database
-
-
-def test_py_xb_conversion(input_filepath):
-    doc: ConverterDocument = ConverterDocument(input_filepath, reader.read_xml(input_filepath),
-                                               tmp_type=py_xb_2017.CreateFromDocument(reader.read_xml(input_filepath)))
-    logger.info("Started processing on file: [" + input_filepath + "]")
-    context = ConversionContext(PageXML2017StrategyPyXB(), doc)
-    # document: Document = context.convert()
 
 
 # def test_generate_ds_conversion(input_filepath):

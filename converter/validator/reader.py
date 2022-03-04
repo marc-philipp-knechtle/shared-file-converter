@@ -1,10 +1,10 @@
 import os
 from pathlib import Path
 
-import xmltodict
 from lxml import etree
 
 from converter.elements import *
+from converter.strategies.page_xml import py_xb_2017
 
 
 @unique
@@ -17,10 +17,6 @@ def read_xml(filepath: str) -> str:
     with open(filepath, "r") as file:
         content: str = file.read()
         return content
-
-
-def read_and_convert_to_dict(filepath: str) -> dict:
-    return xmltodict.parse(read_xml(filepath))
 
 
 def validate_xsd_schema(xml_path: str, xsd_path: str) -> bool:
@@ -84,9 +80,14 @@ class PageXML2017Handler(AbstractIncomingFileHandler):
     def is_instance_of(self, filepath: str) -> bool:
         return validate_xsd_schema(filepath, self._VALIDATION_FILEPATH)
 
-    def handle(self, request):
+    def handle(self, request) -> Document:
         if self.is_instance_of(request):
             logger.info("[" + request + "] validated successfully for [" + self._TYPE.name + "]")
+            xml: str = read_xml(request)
+            converter_document: ConverterDocument = ConverterDocument(filepath=request, original=xml,
+                                                                      tmp_type=py_xb_2017.CreateFromDocument(xml))
+            context = ConversionContext(self._TYPE.value, converter_document)
+            return context.convert()
         else:
             super().handle(request)
 
