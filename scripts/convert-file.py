@@ -93,13 +93,13 @@ def test_py_xb_conversion(input_filepath):
     # document: Document = context.convert()
 
 
-def test_generate_ds_conversion(input_filepath):
-    xml: str = reader.read_xml(input_filepath)
-    doc: ConverterDocument = ConverterDocument(input_filepath, xml,
-                                               tmp_type=generate_ds_2017.parse(input_filepath, silence=True))
-    logger.info("Started processing on file: [" + input_filepath + "]")
-    context = ConversionContext(PageXML2017StrategyGenerateDS(), doc)
-    document: Document = context.convert()
+# def test_generate_ds_conversion(input_filepath):
+#     xml: str = reader.read_xml(input_filepath)
+#     doc: ConverterDocument = ConverterDocument(input_filepath, xml,
+#                                                tmp_type=generate_ds_2017.parse(input_filepath, silence=True))
+#     logger.info("Started processing on file: [" + input_filepath + "]")
+#     context = ConversionContext(PageXML2017StrategyGenerateDS(), doc)
+#     document: Document = context.convert()
 
 
 if __name__ == "__main__":
