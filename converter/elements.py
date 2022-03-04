@@ -1,10 +1,10 @@
 import os.path
+from abc import abstractmethod, ABC
 from dataclasses import dataclass
 from enum import Enum
 
 from loguru import logger
 
-from converter.strategies.elements import ConversionStrategy
 from docrecjson.elements import Document
 
 
@@ -44,6 +44,42 @@ class ConverterDocument:
     @shared_file_format_document.setter
     def shared_file_format_document(self, shared_file_format_document: Document):
         self._shared_file_format_document = shared_file_format_document
+
+
+class ConversionStrategy(ABC):
+    @abstractmethod
+    def initialize(self, original) -> ConverterDocument:
+        pass
+
+    @abstractmethod
+    def add_baselines(self, converter_doc: ConverterDocument) -> ConverterDocument:
+        pass
+
+    @abstractmethod
+    def add_lines(self, converter_doc: ConverterDocument) -> ConverterDocument:
+        pass
+
+
+class PageXMLStrategyObjectify(ConversionStrategy):
+    def initialize(self, original) -> ConverterDocument:
+        pass
+
+    def add_baselines(self, converter_doc: ConverterDocument) -> ConverterDocument:
+        pass
+
+    def add_lines(self, converter_doc: ConverterDocument) -> ConverterDocument:
+        pass
+
+
+class PageXMLStrategyPyXB(ConversionStrategy):
+    def initialize(self, original) -> ConverterDocument:
+        pass
+
+    def add_baselines(self, converter_doc: ConverterDocument) -> ConverterDocument:
+        pass
+
+    def add_lines(self, converter_doc: ConverterDocument) -> ConverterDocument:
+        pass
 
 
 class ConversionContext:
