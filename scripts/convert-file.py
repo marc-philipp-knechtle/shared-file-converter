@@ -9,9 +9,10 @@ import converter.strategies.page_xml.py_xb_2017 as py_xb_2017
 from converter.elements import ConverterDocument, ConversionContext, PageXML2017StrategyPyXB, \
     PageXML2017StrategyGenerateDS
 from converter.validator import reader
-# remove the default loguru logger
+from converter.validator.reader import handle_incoming_file
 from docrecjson.elements import Document
 
+# remove the default loguru logger
 logger.remove()
 # add new custom loggers
 logger.add(sys.stdout, level='INFO')
@@ -52,8 +53,10 @@ def main(args: Namespace):
 
     # todo read file and convert to dict
 
+    handle_incoming_file(input_filepath)
+
     # test_py_xb_conversion(input_filepath)
-    test_generate_ds_conversion(input_filepath)
+    # test_generate_ds_conversion(input_filepath)
 
     # content_to_dict: dict = reader.read_and_convert_to_dict(input_filepath)
     # xml_object = reader.read_and_convert_to_object(input_filepath)

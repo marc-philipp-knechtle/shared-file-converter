@@ -1,8 +1,21 @@
 import os
 
 import xmltodict
-from loguru import logger
 from lxml import etree, objectify
+
+from converter.elements import *
+
+
+@unique
+class SupportedTypes(Enum):
+    PAGE_XML_2019 = PageXML2019Strategy()
+    PAGE_XML_2017 = PageXML2017StrategyPyXB()
+
+
+# todo construct here the available types
+def _get_type() -> SupportedTypes:
+    logger.info("Resolved original type for document: [" + str(SupportedTypes.PAGE_XML_2019) + "]")
+    return SupportedTypes.PAGE_XML_2019
 
 
 def read_xml(filepath: str) -> str:
@@ -41,3 +54,65 @@ def validate(xml_path: str, xsd_path: str) -> bool:
     xml_doc = etree.parse(xml_path)
 
     return xmlschema.validate(xml_doc)
+
+
+class IncomingFileHandler(ABC):
+
+    @abstractmethod
+    def set_next(self, handler):
+        pass
+
+    @abstractmethod
+    def handle(self, request) -> Document:
+        pass
+
+
+class AbstractIncomingFileHandler(IncomingFileHandler):
+    _next_handler: IncomingFileHandler = None
+
+    def set_next(self, handler: IncomingFileHandler) -> IncomingFileHandler:
+        self._next_handler = handler
+        return handler
+
+    @abstractmethod
+    def handle(self, request) -> Document:
+        if self._next_handler:
+            return self._next_handler.handle(request)
+        else:
+            print("reached end of all handlers!")
+
+
+class PageXML2019Handler(AbstractIncomingFileHandler):
+
+    def handle(self, request):
+        if False:
+            print("aoeu")
+        else:
+            logger.info("PageXML2019 did not match, returning to PageXML2017")
+            super().handle(request)
+
+
+class PageXML2017Handler(AbstractIncomingFileHandler):
+
+    def handle(self, request):
+        if False:
+            print("aoesnuh")
+        else:
+            logger.info("PageXML2017 did not match, returning to PageXML2016")
+            super().handle(request)
+
+
+class PageXML2016Handler(AbstractIncomingFileHandler):
+
+    def handle(self, request):
+        if False:
+            print("aonset")
+        else:
+            logger.info("PageXML2016 did not match, defaultinf to False")
+            super().handle(request)
+
+
+def handle_incoming_file(filepath: str) -> Document:
+    page_xml_2019 = PageXML2019Handler()
+    page_xml_2019.set_next(PageXML2017Handler()).set_next(PageXML2016Handler())
+    return page_xml_2019.handle(filepath)

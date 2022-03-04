@@ -1,7 +1,7 @@
 import os.path
 from abc import abstractmethod, ABC
 from dataclasses import dataclass
-from enum import Enum
+from enum import Enum, unique
 
 from loguru import logger
 
@@ -9,22 +9,10 @@ from converter.strategies.page_xml.py_xb_2017 import PcGtsType
 from docrecjson.elements import Document
 
 
-# todo it may be necessary to differentiate between different PageXML versions
-class SupportedTypes(Enum):
-    page_xml = 1
-
-
-# todo construct here the available types
-def _get_type() -> SupportedTypes:
-    logger.info("Resolved original type for document: [" + str(SupportedTypes.page_xml) + "]")
-    return SupportedTypes.page_xml
-
-
 @dataclass
 class ConverterDocument:
     filepath: str
     filename: str
-    previous_type: SupportedTypes
 
     original: str
     tmp_type = None
@@ -33,7 +21,6 @@ class ConverterDocument:
     def __init__(self, filepath: str, original, tmp_type):
         self.filepath = filepath
         self.filename = os.path.basename(filepath)
-        self.previous_type = _get_type()
 
         self.original = original
         self.tmp_type = tmp_type
@@ -106,6 +93,7 @@ class PageXML2017StrategyGenerateDS(ConversionStrategy):
     inner workings, but only because of preference.
     But I'll leave this approach in this repository for an eventual later evaluation.
     """
+
     def initialize(self, original: ConverterDocument) -> ConverterDocument:
         print("hello there from initialyze")
         generate_ds_object = original.tmp_type
