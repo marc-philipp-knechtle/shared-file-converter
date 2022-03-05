@@ -75,7 +75,13 @@ class PageXML2017StrategyPyXB(ConversionStrategy):
         return original
 
     def add_metadata(self, original: ConverterDocument) -> ConverterDocument:
-        pass
+        pyxb_object: PcGtsType = original.tmp_type
+        document: Document = original.shared_file_format_document
+
+        document.add_metadata({"LastChange": str(pyxb_object.Metadata.LastChange)})
+
+        original.shared_file_format_document = document
+        return original
 
     def add_baselines(self, converter_doc: ConverterDocument) -> ConverterDocument:
         pass
@@ -142,6 +148,7 @@ class ConversionContext:
 
     def convert(self) -> Document:
         self._converter_doc = self._strategy.initialize(self._converter_doc)
+        self._converter_doc = self._strategy.add_metadata(self._converter_doc)
         # self._converter_doc = self._strategy.add_lines(self._converter_doc)
         # self._converter_doc = self._strategy.add_baselines(self._converter_doc)
         return self._converter_doc.shared_file_format_document
