@@ -1,12 +1,13 @@
 import argparse
+import json
 import sys
 from argparse import Namespace
 
 from loguru import logger
 
 from converter.validator.reader import handle_incoming_file
+from docrecjson.elements import Document
 
-# remove the default loguru logger
 logger.remove()
 # add new custom loggers
 logger.add(sys.stdout, level='INFO')
@@ -47,7 +48,8 @@ def main(args: Namespace):
 
     # todo read file and convert to dict
 
-    handle_incoming_file(input_filepath)
+    doc: Document = handle_incoming_file(input_filepath)
+    logger.info(json.dumps(doc.to_dict(), indent=4))
 
     # test_py_xb_conversion(input_filepath)
     # test_generate_ds_conversion(input_filepath)

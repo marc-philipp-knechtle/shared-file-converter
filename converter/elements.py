@@ -1,7 +1,6 @@
 import os.path
 from abc import abstractmethod, ABC
 from dataclasses import dataclass
-from enum import Enum, unique
 
 from loguru import logger
 
@@ -68,11 +67,10 @@ class PageXML2017StrategyObjectify(ConversionStrategy):
 
 class PageXML2017StrategyPyXB(ConversionStrategy):
     def initialize(self, original: ConverterDocument) -> ConverterDocument:
-        print("hello there from pagexmlpyxb")
-        document: Document = Document(version="", filename="", original_image_size="", content="")
         pyxb_object: PcGtsType = original.tmp_type
-        print(pyxb_object.Metadata.Creator)
-
+        document: Document = Document.empty(pyxb_object.Page.imageFilename,
+                                            (pyxb_object.Page.imageHeight, pyxb_object.Page.imageWidth))
+        document.add_creator(pyxb_object.Metadata.Creator, "2017-07-15")
         original.shared_file_format_document = document
         return original
 
@@ -144,6 +142,6 @@ class ConversionContext:
 
     def convert(self) -> Document:
         self._converter_doc = self._strategy.initialize(self._converter_doc)
-        self._converter_doc = self._strategy.add_lines(self._converter_doc)
-        self._converter_doc = self._strategy.add_baselines(self._converter_doc)
+        # self._converter_doc = self._strategy.add_lines(self._converter_doc)
+        # self._converter_doc = self._strategy.add_baselines(self._converter_doc)
         return self._converter_doc.shared_file_format_document
