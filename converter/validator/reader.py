@@ -71,7 +71,7 @@ class PageXML2019Handler(AbstractIncomingFileHandler):
         if self.is_instance_of(request):
             logger.info("[" + request + "] validated successfully for [" + self._TYPE.name + "]")
         else:
-            super().handle(request)
+            return super().handle(request)
 
 
 class PageXML2017Handler(AbstractIncomingFileHandler):
@@ -90,7 +90,7 @@ class PageXML2017Handler(AbstractIncomingFileHandler):
             context = ConversionContext(self._TYPE.value, converter_document)
             return context.convert()
         else:
-            super().handle(request)
+            return super().handle(request)
 
 
 def handle_incoming_file(filepath: str) -> Document:
