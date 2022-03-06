@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 from loguru import logger
 
-from converter.strategies.page_xml.py_xb_2017 import PcGtsType
+from converter.strategies.page_xml.py_xb_2017 import PcGtsType, UserDefinedType
 from docrecjson.elements import Document
 
 
@@ -66,6 +66,27 @@ class PageXML2017StrategyObjectify(ConversionStrategy):
 
 
 class PageXML2017StrategyPyXB(ConversionStrategy):
+
+    # This is not inspected because moving this out of the strategy may be very confusing
+    # Furthermore this may be necessary to implement for each strategy and be moved therefore into ConversionStrategy
+    #   or a page subclass.
+    # noinspection PyMethodMayBeStatic
+    def _execute_if_present(self, py_xb_object_condition, func, *args):
+        if not py_xb_object_condition:
+            logger.debug("[" + str(type(py_xb_object_condition)) + "] is not present in the currently created object.")
+        else:
+            func(*args)
+
+    # noinspection PyMethodMayBeStatic
+    def _create_user_defined_metadata(self, user_defined_metadata: UserDefinedType) -> dict:
+        # todo mitigate the necessity for this behaviour or create an abstract function which performs this check
+        if user_defined_metadata is None:
+            return {}
+        dct = {}
+        for attribute in user_defined_metadata.UserAttribute:
+            dct[str(attribute.name)] = str(attribute.value_)
+        return dct
+
     def initialize(self, original: ConverterDocument) -> ConverterDocument:
         pyxb_object: PcGtsType = original.tmp_type
         document: Document = Document.empty(pyxb_object.Page.imageFilename,
@@ -79,12 +100,20 @@ class PageXML2017StrategyPyXB(ConversionStrategy):
         document: Document = original.shared_file_format_document
 
         document.add_metadata({"LastChange": str(pyxb_object.Metadata.LastChange)})
+        self._execute_if_present(pyxb_object.Metadata.Comments, document.add_metadata,
+                                 {"Comments": str(pyxb_object.Metadata.Comments)})
+        self._execute_if_present(pyxb_object.Metadata.UserDefined, document.add_metadata,
+                                 self._create_user_defined_metadata(pyxb_object.Metadata.UserDefined))
 
         original.shared_file_format_document = document
         return original
 
-    def add_baselines(self, converter_doc: ConverterDocument) -> ConverterDocument:
-        pass
+    def add_baselines(self, original: ConverterDocument) -> ConverterDocument:
+        pyxb_object: PcGtsType = original.tmp_type
+        document: Document = original.shared_file_format_document
+
+        original.shared_file_format_document = document
+        return original
 
     def add_lines(self, converter_doc: ConverterDocument) -> ConverterDocument:
         pass
@@ -150,5 +179,5 @@ class ConversionContext:
         self._converter_doc = self._strategy.initialize(self._converter_doc)
         self._converter_doc = self._strategy.add_metadata(self._converter_doc)
         # self._converter_doc = self._strategy.add_lines(self._converter_doc)
-        # self._converter_doc = self._strategy.add_baselines(self._converter_doc)
+        self._converter_doc = self._strategy.add_baselines(self._converter_doc)
         return self._converter_doc.shared_file_format_document
