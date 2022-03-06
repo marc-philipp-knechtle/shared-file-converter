@@ -10,7 +10,7 @@ from docrecjson.elements import Document
 
 logger.remove()
 # add new custom loggers
-logger.add(sys.stdout, level='INFO')
+logger.add(sys.stdout, level='DEBUG')
 logger.add("errors.log", level='ERROR', rotation="1 MB")
 
 
