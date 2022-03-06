@@ -1,6 +1,7 @@
 import os.path
 from abc import abstractmethod, ABC
 from dataclasses import dataclass
+from datetime import date
 
 from loguru import logger
 
@@ -92,6 +93,7 @@ class PageXML2017StrategyPyXB(ConversionStrategy):
         document: Document = Document.empty(pyxb_object.Page.imageFilename,
                                             (pyxb_object.Page.imageHeight, pyxb_object.Page.imageWidth))
         document.add_creator(pyxb_object.Metadata.Creator, "2017-07-15")
+        document.add_creator("shared-file-converter", str(date.today()))
         original.shared_file_format_document = document
         return original
 
