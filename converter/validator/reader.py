@@ -20,13 +20,23 @@ def read_xml(filepath: str) -> str:
         return content
 
 
-def validate_xsd_schema(xml_path: str, xsd_path: str) -> bool:
+def _validate_xsd_schema(xml_path: str, xsd_path: str) -> bool:
     xmlschema_doc = etree.parse(os.path.join(xsd_path))
     xmlschema = etree.XMLSchema(xmlschema_doc)
 
     xml_doc = etree.parse(xml_path)
 
-    return xmlschema.validate(xml_doc)
+    # xmlschema.assert_(xml_doc)
+    return_val = xmlschema.validate(xml_doc)
+    if not return_val:
+        _log_xsd_validation_error(xmlschema, xsd_path)
+    return return_val
+
+
+def _log_xsd_validation_error(xmlschema, xsd_path):
+    log = xmlschema.error_log
+    error = log.last_error
+    logger.debug("Validation with [" + str(xsd_path) + "] resulted in:\n" + str(error))
 
 
 class IncomingFileHandler(ABC):
@@ -65,7 +75,7 @@ class PageXML2019Handler(AbstractIncomingFileHandler):
     _VALIDATION_FILEPATH: str = Path(__file__).parent / "page-xml/2019-07-15.xsd"
 
     def is_instance_of(self, filepath: str) -> bool:
-        return validate_xsd_schema(filepath, self._VALIDATION_FILEPATH)
+        return _validate_xsd_schema(filepath, self._VALIDATION_FILEPATH)
 
     def handle(self, request: str):
         if self.is_instance_of(request):
@@ -79,7 +89,7 @@ class PageXML2017Handler(AbstractIncomingFileHandler):
     _VALIDATION_FILEPATH: str = Path(__file__).parent / "page-xml/2017-07-15.xsd"
 
     def is_instance_of(self, filepath: str) -> bool:
-        return validate_xsd_schema(filepath, self._VALIDATION_FILEPATH)
+        return _validate_xsd_schema(filepath, self._VALIDATION_FILEPATH)
 
     def handle(self, request) -> Document:
         if self.is_instance_of(request):
