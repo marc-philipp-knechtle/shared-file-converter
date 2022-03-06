@@ -104,6 +104,8 @@ class PageXML2017StrategyPyXB(ConversionStrategy):
                                  {"Comments": str(pyxb_object.Metadata.Comments)})
         self._execute_if_present(pyxb_object.Metadata.UserDefined, document.add_metadata,
                                  self._create_user_defined_metadata(pyxb_object.Metadata.UserDefined))
+        self._execute_if_present(pyxb_object.Metadata.externalRef, document.add_metadata,
+                                 {"externalRef": str(pyxb_object.Metadata.externalRef)})
 
         original.shared_file_format_document = document
         return original
