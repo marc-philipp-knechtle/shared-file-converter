@@ -8,7 +8,7 @@ from typing import List
 from loguru import logger
 from pyxb.binding.content import _PluralBinding
 
-from converter.strategies.page_xml.py_xb_2017 import PcGtsType, UserDefinedType, TextRegionType
+from converter.strategies.generated.page_xml.py_xb_2017 import PcGtsType, UserDefinedType, TextRegionType
 from docrecjson.commontypes import Points
 from docrecjson.elements import Document, GroupRef
 
