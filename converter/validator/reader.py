@@ -6,6 +6,7 @@ from lxml import etree
 
 from converter.elements import *
 from converter.strategies.generated.page_xml import py_xb_2017
+from converter.strategies.page_xml_2017_pyxb import PageXML2017StrategyPyXB
 
 
 @unique
