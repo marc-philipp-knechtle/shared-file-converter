@@ -116,14 +116,14 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         points: PointsType = coords.points
         coords_pairs = re.findall("([0-9]+,[0-9]+ )", str(points))
         pair: str
-        points = []
+        points_shared_file_format = []
         for pair in coords_pairs:
             pair_tuple = pair.split(",")
             x = int(pair_tuple[0])
             y = int(pair_tuple[1])
             point = (x, y)
-            points.append(point)
-        return points
+            points_shared_file_format.append(point)
+        return points_shared_file_format
 
     def handle_image_region(self, image_region_type) -> dict:
         pass
