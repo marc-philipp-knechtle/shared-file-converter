@@ -52,20 +52,6 @@ class ConversionStrategy(ABC):
         pass
 
 
-class PageXML2017StrategyObjectify(ConversionStrategy):
-    def initialize(self, original: ConverterDocument) -> ConverterDocument:
-        pass
-
-    def add_baselines(self, converter_doc: ConverterDocument) -> ConverterDocument:
-        pass
-
-    def add_metadata(self, original: ConverterDocument) -> ConverterDocument:
-        pass
-
-    def add_lines(self, converter_doc: ConverterDocument) -> ConverterDocument:
-        pass
-
-
 class PageXML2017StrategyPyXB(ConversionStrategy):
 
     # This is not inspected because moving this out of the strategy may be very confusing
