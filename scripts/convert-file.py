@@ -31,12 +31,14 @@ def parse_arguments() -> Namespace:
                         default=None)
     parser.add_argument("-dbcol", "--db_collection", type=str,
                         help="This denotes the collection where the created json should be written into.", default=None)
+    parser.add_argument("-log", "--log_output", type=bool, default=False,
+                        help="Only info-logs the output instead of writing it to a file or database.")
     return parser.parse_args()
 
 
 def check_args(args: Namespace):
     assert args.input_file is not None
-    assert args.output_file is not None or args.db_connection is not None
+    assert args.output_file is not None or args.db_connection is not None or args.log_output is True
 
 
 def main(args: Namespace):
@@ -45,11 +47,13 @@ def main(args: Namespace):
     output_filepath: str = args.output_file
     db_connection: str = args.db_connection
     db_collection: str = args.db_collection
+    log_output: bool = args.log_output
 
     # todo read file and convert to dict
 
     doc: Document = handle_incoming_file(input_filepath)
-    logger.info(json.dumps(doc.to_dict(), indent=4))
+    if log_output:
+        logger.info(json.dumps(doc.to_dict(), indent=4))
 
     # todo write to file or database
 
