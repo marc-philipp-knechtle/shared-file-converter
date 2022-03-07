@@ -51,33 +51,6 @@ def main(args: Namespace):
     doc: Document = handle_incoming_file(input_filepath)
     logger.info(json.dumps(doc.to_dict(), indent=4))
 
-    # test_py_xb_conversion(input_filepath)
-    # test_generate_ds_conversion(input_filepath)
-
-    # content_to_dict: dict = reader.read_and_convert_to_dict(input_filepath)
-    # xml_object = reader.read_and_convert_to_object(input_filepath)
-    # print("instance?:")
-    # print(isinstance(xml_object.getroot(), objectify.ObjectifiedElement))
-    # print(str(xml_object.getroot()))
-    # # print(str(objectify.dump(xml_object.getroot())))
-    # # objectify.xsiannotate(xml_object)
-    # objectify.deannotate(xml_object)
-    # print(str(objectify.dump(xml_object.getroot())))
-    #
-    # print("Direct Access attempt:")
-    # print(str(xml_object.getroot().Metadata.Creator))
-    # print(str(xml_object.getroot().Page.TextRegion[0].Coords.get("points")))
-    # print(type(xml_object.getroot().Page.TextRegion[0].Coords.get("points")))
-
-    # # = ObjectfiedElement?
-    # def read_and_convert_to_object(filepath: str):
-    #     # if not validation_result:
-    #     #     logger.error("The read XML File does not match to the specified schema.")
-    #     # else:
-    #     #     logger.info("[" + filepath + "] validated successfully.")
-    #     return objectify.parse(filepath)
-    #     # return objectify.fromstring(read_xml(filepath))
-
     # todo write to file or database
 
 
