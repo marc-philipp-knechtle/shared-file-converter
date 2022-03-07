@@ -5,7 +5,7 @@ from pathlib import Path
 from lxml import etree
 
 from converter.elements import *
-from converter.strategies.page_xml import py_xb_2017
+from converter.strategies.generated.page_xml import py_xb_2017
 
 
 @unique
