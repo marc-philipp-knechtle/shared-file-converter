@@ -1,12 +1,16 @@
 import os.path
 from abc import abstractmethod, ABC
+from ctypes import Union
 from dataclasses import dataclass
 from datetime import date
+from typing import List
 
 from loguru import logger
+from pyxb.binding.content import _PluralBinding
 
-from converter.strategies.page_xml.py_xb_2017 import PcGtsType, UserDefinedType
-from docrecjson.elements import Document
+from converter.strategies.page_xml.py_xb_2017 import PcGtsType, UserDefinedType, TextRegionType
+from docrecjson.commontypes import Points
+from docrecjson.elements import Document, GroupRef
 
 
 @dataclass
@@ -47,16 +51,23 @@ class ConversionStrategy(ABC):
     def add_regions(self, original: ConverterDocument) -> ConverterDocument:
         pass
 
+
+class PageConversionStrategy(ConversionStrategy, ABC):
+
     @abstractmethod
-    def add_baselines(self, converter_doc: ConverterDocument) -> ConverterDocument:
+    def handle_text_region(self, text_region_type):
         pass
 
     @abstractmethod
-    def add_lines(self, converter_doc: ConverterDocument) -> ConverterDocument:
+    def handle_image_region(self, image_region_type) -> dict:
+        pass
+
+    @abstractmethod
+    def handle_line_drawing_region(self, line_drawing_region_type) -> dict:
         pass
 
 
-class PageXML2017StrategyPyXB(ConversionStrategy):
+class PageXML2017StrategyPyXB(PageConversionStrategy):
 
     # This is not inspected because moving this out of the strategy may be very confusing
     # Furthermore this may be necessary to implement for each strategy and be moved therefore into ConversionStrategy
@@ -103,16 +114,29 @@ class PageXML2017StrategyPyXB(ConversionStrategy):
         return original
 
     def add_regions(self, original: ConverterDocument) -> ConverterDocument:
-        pass
-
-    def add_baselines(self, original: ConverterDocument) -> ConverterDocument:
         pyxb_object: PcGtsType = original.tmp_type
         document: Document = original.shared_file_format_document
+
+        self._execute_if_present(pyxb_object.Page.TextRegion, document.add_region,
+                                 self.handle_text_region(pyxb_object.Page.TextRegion), "text")
 
         original.shared_file_format_document = document
         return original
 
-    def add_lines(self, converter_doc: ConverterDocument) -> ConverterDocument:
+    def handle_text_region(self, text_region_type: _PluralBinding):
+        print(str(type(text_region_type)))
+        for test_region in text_region_type:
+            text_line = test_region.TextLine
+            # points = text_line.Coords.points
+            # baseline = text_line.Baseline.points
+            # text_equiv = text_line.TextEquiv.Unicode
+            print("hello")
+        pass
+
+    def handle_image_region(self, image_region_type) -> dict:
+        pass
+
+    def handle_line_drawing_region(self, line_drawing_region_type) -> dict:
         pass
 
 
@@ -181,6 +205,5 @@ class ConversionContext:
     def convert(self) -> Document:
         self._converter_doc = self._strategy.initialize(self._converter_doc)
         self._converter_doc = self._strategy.add_metadata(self._converter_doc)
-        # self._converter_doc = self._strategy.add_lines(self._converter_doc)
-        self._converter_doc = self._strategy.add_baselines(self._converter_doc)
+        self._converter_doc = self._strategy.add_regions(self._converter_doc)
         return self._converter_doc.shared_file_format_document
