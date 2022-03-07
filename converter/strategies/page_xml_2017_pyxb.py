@@ -1,10 +1,13 @@
+import re
 from datetime import date
+from typing import Sequence, Tuple
 
 from loguru import logger
-from pyxb.binding.content import _PluralBinding
 
 from converter.elements import PageConversionStrategy, ConverterDocument
-from converter.strategies.generated.page_xml.py_xb_2017 import PcGtsType, UserDefinedType, TextRegionType
+from converter.strategies.generated.page_xml.py_xb_2017 import PcGtsType, UserDefinedType, TextRegionType, TextLineType, \
+    CoordsType, PointsType
+from docrecjson.commontypes import Points, Point
 from docrecjson.elements import Document
 
 
@@ -93,11 +96,34 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         print(str(type(text_regions)))
         text_region: TextRegionType
         for text_region in text_regions:
-            text_line = text_region.TextLine
+            text_lines = text_region.TextLine
+            text_line: TextLineType
+            for text_line in text_lines:
+                points = self.handle_coords_type(text_line.Coords)
+                print("asdf")
             # points = text_line.Coords.points
             # baseline = text_line.Baseline.points
             # text_equiv = text_line.TextEquiv.Unicode
+            print("asdf")
         pass
+
+    def handle_coords_type(self, coords: CoordsType) -> Sequence[Tuple[int, int]]:
+        """
+        the coords entries have been previously xsd-validated using: ([0-9]+,[0-9]+ )+([0-9]+,[0-9]+)
+        :param coords:
+        :return:
+        """
+        points: PointsType = coords.points
+        coords_pairs = re.findall("([0-9]+,[0-9]+ )", str(points))
+        pair: str
+        points = []
+        for pair in coords_pairs:
+            pair_tuple = pair.split(",")
+            x = int(pair_tuple[0])
+            y = int(pair_tuple[1])
+            point = (x, y)
+            points.append(point)
+        return points
 
     def handle_image_region(self, image_region_type) -> dict:
         pass
