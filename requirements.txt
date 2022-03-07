@@ -2,6 +2,7 @@ xmltodict
 pymongo
 loguru
 lxml
+pyxb
 
 -e shared-file-format/python
 -e .
