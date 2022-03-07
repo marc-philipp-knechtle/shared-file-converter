@@ -44,6 +44,10 @@ class ConversionStrategy(ABC):
         pass
 
     @abstractmethod
+    def add_regions(self, original: ConverterDocument) -> ConverterDocument:
+        pass
+
+    @abstractmethod
     def add_baselines(self, converter_doc: ConverterDocument) -> ConverterDocument:
         pass
 
@@ -98,6 +102,9 @@ class PageXML2017StrategyPyXB(ConversionStrategy):
         original.shared_file_format_document = document
         return original
 
+    def add_regions(self, original: ConverterDocument) -> ConverterDocument:
+        pass
+
     def add_baselines(self, original: ConverterDocument) -> ConverterDocument:
         pyxb_object: PcGtsType = original.tmp_type
         document: Document = original.shared_file_format_document
@@ -126,6 +133,9 @@ class PageXML2017StrategyGenerateDS(ConversionStrategy):
     def add_metadata(self, original: ConverterDocument) -> ConverterDocument:
         pass
 
+    def add_regions(self, original: ConverterDocument) -> ConverterDocument:
+        pass
+
     def add_baselines(self, converter_doc: ConverterDocument) -> ConverterDocument:
         pass
 
@@ -139,6 +149,9 @@ class PageXML2019Strategy(ConversionStrategy):
         pass
 
     def add_metadata(self, original: ConverterDocument) -> ConverterDocument:
+        pass
+
+    def add_regions(self, original: ConverterDocument) -> ConverterDocument:
         pass
 
     def add_baselines(self, converter_doc: ConverterDocument) -> ConverterDocument:
