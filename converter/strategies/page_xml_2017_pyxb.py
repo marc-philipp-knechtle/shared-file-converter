@@ -4,11 +4,35 @@ from loguru import logger
 from pyxb.binding.content import _PluralBinding
 
 from converter.elements import PageConversionStrategy, ConverterDocument
-from converter.strategies.generated.page_xml.py_xb_2017 import PcGtsType, UserDefinedType
+from converter.strategies.generated.page_xml.py_xb_2017 import PcGtsType, UserDefinedType, TextRegionType
 from docrecjson.elements import Document
 
 
 class PageXML2017StrategyPyXB(PageConversionStrategy):
+    """
+    assumptions:
+        *   each region is a group -> top level regions of any type will always share a common group id
+        *   Nested xml objects are currently not allowed
+            In this PageXML version, there are the following complex base Regions:
+                - TextRegion
+                - ImageRegion
+                - LineDrawingRegion
+                - GraphicRegion
+                - TableRegion
+                - ChartRegion
+                - SeparatorRegion
+                - MathsRegion
+                - ChemRegion
+                - MusicRegion
+                - AdvertRegion
+                - NoiseRegion
+                - UnknownRegion
+            Theoretically, each Region could have any other Region as subtype. This subtyping is not processed.
+            I don't know whether it's intended that you could theoretically have a ImageRegion as Subtype of an
+            TextRegion, but the xsd schema would allow it.
+            It originates from the dependency of each ...Type to RegionType, which includes the other ...Types.
+            The dependency to RegionType is necessary to include basic properties e.g. Coordinates.
+    """
 
     # This is not inspected because moving this out of the strategy may be very confusing
     # Furthermore this may be necessary to implement for each strategy and be moved therefore into ConversionStrategy
@@ -64,14 +88,15 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         original.shared_file_format_document = document
         return original
 
-    def handle_text_region(self, text_region_type: _PluralBinding):
-        print(str(type(text_region_type)))
-        for test_region in text_region_type:
-            text_line = test_region.TextLine
+    def handle_text_region(self, text_regions):
+
+        print(str(type(text_regions)))
+        text_region: TextRegionType
+        for text_region in text_regions:
+            text_line = text_region.TextLine
             # points = text_line.Coords.points
             # baseline = text_line.Baseline.points
             # text_equiv = text_line.TextEquiv.Unicode
-            print("hello")
         pass
 
     def handle_image_region(self, image_region_type) -> dict:
