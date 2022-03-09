@@ -44,6 +44,10 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         if py_xb_object_condition:
             func(*args)
 
+    def _log_warning_not_processed_if_present(self, py_xb_object, property_name: str):
+        if py_xb_object:
+            logger.warning(property_name + "= [" + str(py_xb_object) + "] is not further processed.")
+
     # noinspection PyMethodMayBeStatic
     def _create_user_defined_metadata(self, user_defined_metadata: UserDefinedType) -> dict:
         # todo mitigate the necessity for this behaviour or create an abstract function which performs this check
@@ -117,6 +121,21 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
                 region_subtype = text_region.type
 
                 document.add_region(coordinates, region_type, region_subtype)
+
+            self._log_warning_not_processed_if_present(text_region.align, "align")
+            self._log_warning_not_processed_if_present(text_region.comments, "comments")
+            self._log_warning_not_processed_if_present(text_region.continuation, "continuation")
+            self._log_warning_not_processed_if_present(text_region.custom, "custom")
+            self._log_warning_not_processed_if_present(text_region.indented, "indented")
+            self._log_warning_not_processed_if_present(text_region.leading, "leading")
+            self._log_warning_not_processed_if_present(text_region.orientation, "orientation")
+            self._log_warning_not_processed_if_present(text_region.primaryLanguage, "primaryLanguage")
+            self._log_warning_not_processed_if_present(text_region.primaryScript, "primaryScript")
+            self._log_warning_not_processed_if_present(text_region.production, "production")
+            self._log_warning_not_processed_if_present(text_region.readingDirection, "readingDirection")
+            self._log_warning_not_processed_if_present(text_region.readingOrientation, "readingOrientation")
+            self._log_warning_not_processed_if_present(text_region.secondaryLanguage, "secondaryLanguage")
+            self._log_warning_not_processed_if_present(text_region.textLineOrder, "textLineOrder")
 
             # text_lines = text_region.TextLine
             # text_line: TextLineType
