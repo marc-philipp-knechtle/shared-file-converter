@@ -49,7 +49,7 @@ class ConversionStrategy(ABC):
 class PageConversionStrategy(ConversionStrategy, ABC):
 
     @abstractmethod
-    def handle_text_region(self, text_region_type):
+    def handle_text_region(self, text_region_type, document: Document) -> Document:
         pass
 
     @abstractmethod
