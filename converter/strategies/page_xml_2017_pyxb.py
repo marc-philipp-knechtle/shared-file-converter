@@ -44,9 +44,9 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         if py_xb_object_condition:
             func(*args)
 
-    def _log_warning_not_processed_if_present(self, py_xb_object, property_name: str):
-        if py_xb_object:
-            logger.warning(property_name + "= [" + str(py_xb_object) + "] is not further processed.")
+    def _log_warning_not_processed_if_present(self, obj, property_name: str):
+        if obj:
+            logger.warning(property_name + "= [" + str(obj) + "] is not further processed.")
 
     # noinspection PyMethodMayBeStatic
     def _create_user_defined_metadata(self, user_defined_metadata: UserDefinedType) -> dict:
