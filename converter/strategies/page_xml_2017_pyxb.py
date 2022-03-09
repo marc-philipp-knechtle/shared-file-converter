@@ -122,26 +122,29 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
 
                 document.add_region(coordinates, region_type, region_subtype)
 
-            self._log_warning_not_processed_if_present(text_region.align, "align")
-            self._log_warning_not_processed_if_present(text_region.comments, "comments")
-            self._log_warning_not_processed_if_present(text_region.continuation, "continuation")
-            self._log_warning_not_processed_if_present(text_region.custom, "custom")
-            self._log_warning_not_processed_if_present(text_region.indented, "indented")
-            self._log_warning_not_processed_if_present(text_region.leading, "leading")
-            self._log_warning_not_processed_if_present(text_region.orientation, "orientation")
-            self._log_warning_not_processed_if_present(text_region.primaryLanguage, "primaryLanguage")
-            self._log_warning_not_processed_if_present(text_region.primaryScript, "primaryScript")
-            self._log_warning_not_processed_if_present(text_region.production, "production")
-            self._log_warning_not_processed_if_present(text_region.readingDirection, "readingDirection")
-            self._log_warning_not_processed_if_present(text_region.readingOrientation, "readingOrientation")
-            self._log_warning_not_processed_if_present(text_region.secondaryLanguage, "secondaryLanguage")
-            self._log_warning_not_processed_if_present(text_region.textLineOrder, "textLineOrder")
+            self._log_warn_missing_simple_root_text_region_attributes(text_region)
 
             # text_lines = text_region.TextLine
             # text_line: TextLineType
             # for text_line in text_lines:
             #     points = self.handle_coords_type(text_line.Coords)
         return document
+
+    def _log_warn_missing_simple_root_text_region_attributes(self, text_region):
+        self._log_warning_not_processed_if_present(text_region.align, "align")
+        self._log_warning_not_processed_if_present(text_region.comments, "comments")
+        self._log_warning_not_processed_if_present(text_region.continuation, "continuation")
+        self._log_warning_not_processed_if_present(text_region.custom, "custom")
+        self._log_warning_not_processed_if_present(text_region.indented, "indented")
+        self._log_warning_not_processed_if_present(text_region.leading, "leading")
+        self._log_warning_not_processed_if_present(text_region.orientation, "orientation")
+        self._log_warning_not_processed_if_present(text_region.primaryLanguage, "primaryLanguage")
+        self._log_warning_not_processed_if_present(text_region.primaryScript, "primaryScript")
+        self._log_warning_not_processed_if_present(text_region.production, "production")
+        self._log_warning_not_processed_if_present(text_region.readingDirection, "readingDirection")
+        self._log_warning_not_processed_if_present(text_region.readingOrientation, "readingOrientation")
+        self._log_warning_not_processed_if_present(text_region.secondaryLanguage, "secondaryLanguage")
+        self._log_warning_not_processed_if_present(text_region.textLineOrder, "textLineOrder")
 
     def _check_plural_binding_length(self, _plural_binding_object) -> int:
         return len(_plural_binding_object)
