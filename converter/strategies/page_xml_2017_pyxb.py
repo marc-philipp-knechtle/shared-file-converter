@@ -108,26 +108,32 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
 
         text_region: TextRegionType
         for text_region in text_regions:
-
             if self._has_complex_subtype(text_region):
-                # this text regions has subtypes -> it only serves the purpose of beeing a group id for it's subtypes
-                logger.error("complec subtypes not implemented")
-                pass
+                # this text regions has subtypes
+                # -> it only serves the purpose of beeing a group id for it's subtypes
+                document = self._handle_complex_text_region_type(document, text_region)
             else:
                 # this text region stands for itself without any further information
                 # -> it's added to document engine as text content
-                coordinates = self.handle_coords_type(text_region.Coords)
-                region_type: str = "text"
-                region_subtype = text_region.type
-
-                document.add_region(coordinates, region_type, region_subtype)
+                document = self._handle_simple_text_region_type(document, text_region)
 
             self._log_warn_missing_simple_root_text_region_attributes(text_region)
 
-            # text_lines = text_region.TextLine
-            # text_line: TextLineType
-            # for text_line in text_lines:
-            #     points = self.handle_coords_type(text_line.Coords)
+        return document
+
+    def _handle_simple_text_region_type(self, document: Document, text_region: TextRegionType) -> Document:
+        coordinates = self.handle_coords_type(text_region.Coords)
+        region_type: str = "text"
+        region_subtype = text_region.type
+        document.add_region(coordinates, region_type, region_subtype)
+        return document
+
+    def _handle_complex_text_region_type(self, document: Document, text_region: TextRegionType) -> Document:
+        # text_lines = text_region.TextLine
+        # text_line: TextLineType
+        # for text_line in text_lines:
+        #     points = self.handle_coords_type(text_line.Coords)
+        logger.error("not implemented")
         return document
 
     def _log_warn_missing_simple_root_text_region_attributes(self, text_region):
