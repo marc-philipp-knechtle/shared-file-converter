@@ -50,7 +50,8 @@
             <pc:UserAttribute description="some-user-defined-description" name="some-user-defined-name"
                               type="xsd:string" value="some-user-defined-value"/>
         </pc:UserDefined>
-        <pc:TextRegion align="left" comments="" continuation="true" custom="" id="idvalue3" indented="true" leading="0"
+        <pc:TextRegion align="left" comments="some textRegionComments" continuation="true" custom="" id="idvalue3"
+                       indented="true" leading="0"
                        orientation="0.0" primaryLanguage="Abkhaz" primaryScript="Adlm - Adlam" production="printed"
                        readingDirection="left-to-right" readingOrientation="0.0" secondaryLanguage="Abkhaz"
                        secondaryScript="Adlm - Adlam" textLineOrder="top-to-bottom" type="paragraph">
