@@ -166,7 +166,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
             text_region.TextLine) + self._check_plural_binding_length(
             text_region.TextRegion) + self._check_plural_binding_length(
             text_region.UnknownRegion)
-        return True if length_of_all_types == 0 else False
+        return True if length_of_all_types != 0 else False
 
     def _is_present(self, _plural_binding_object) -> bool:
         return True if len(_plural_binding_object) != 0 else False
