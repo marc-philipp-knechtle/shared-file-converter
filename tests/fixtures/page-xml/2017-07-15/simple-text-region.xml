@@ -9,7 +9,8 @@
         <pc:LastChange>2001-12-31T12:00:00</pc:LastChange>
         <pc:Comments>pc:Comments</pc:Comments>
         <pc:UserDefined>
-            <pc:UserAttribute description="" name="" type="xsd:string" value=""/>
+            <pc:UserAttribute description="some user defined description" name="user-defined-name" type="xsd:string"
+                              value="user-defined-value"/>
         </pc:UserDefined>
     </pc:Metadata>
     <pc:Page custom="" imageFilename="" imageHeight="0" imageWidth="0" primaryLanguage="Abkhaz"
@@ -36,17 +37,18 @@
                 <pc:RegionRef regionRef="idvalue0"/>
             </pc:Layer>
         </pc:Layers>
-<!--        Todo why is this non compatible with the schema-->
-<!--        <pc:Relations>-->
-<!--            <pc:Relation comments="" custom="" type="link">-->
-<!--                <pc:RegionRef regionRef="idvalue0"/>-->
-<!--                <pc:RegionRef regionRef="idvalue0"/>-->
-<!--                <pc:RegionRef regionRef="idvalue0"/>-->
-<!--                <pc:RegionRef regionRef="idvalue0"/>-->
-<!--            </pc:Relation>-->
-<!--        </pc:Relations>-->
+        <!--        Todo why is this non compatible with the schema-->
+        <!--        <pc:Relations>-->
+        <!--            <pc:Relation comments="" custom="" type="link">-->
+        <!--                <pc:RegionRef regionRef="idvalue0"/>-->
+        <!--                <pc:RegionRef regionRef="idvalue0"/>-->
+        <!--                <pc:RegionRef regionRef="idvalue0"/>-->
+        <!--                <pc:RegionRef regionRef="idvalue0"/>-->
+        <!--            </pc:Relation>-->
+        <!--        </pc:Relations>-->
         <pc:UserDefined>
-            <pc:UserAttribute description="" name="" type="xsd:string" value=""/>
+            <pc:UserAttribute description="some-user-defined-description" name="some-user-defined-name"
+                              type="xsd:string" value="some-user-defined-value"/>
         </pc:UserDefined>
         <pc:TextRegion align="left" comments="" continuation="true" custom="" id="idvalue3" indented="true" leading="0"
                        orientation="0.0" primaryLanguage="Abkhaz" primaryScript="Adlm - Adlam" production="printed"
