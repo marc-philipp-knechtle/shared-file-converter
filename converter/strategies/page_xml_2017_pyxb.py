@@ -5,10 +5,9 @@ from typing import Sequence, Tuple
 from loguru import logger
 
 from converter.elements import PageConversionStrategy, ConverterDocument
-from converter.strategies.generated.page_xml.py_xb_2017 import PcGtsType, UserDefinedType, TextRegionType, TextLineType, \
-    CoordsType, PointsType
-from docrecjson.commontypes import Points, Point
-from docrecjson.elements import Document
+from converter.strategies.generated.page_xml.py_xb_2017 import PcGtsType, UserDefinedType, TextRegionType, CoordsType, \
+    PointsType
+from docrecjson.elements import Document, Region
 
 
 class PageXML2017StrategyPyXB(PageConversionStrategy):
@@ -42,9 +41,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
     #   or a page subclass.
     # noinspection PyMethodMayBeStatic
     def _execute_if_present(self, py_xb_object_condition, func, *args):
-        if not py_xb_object_condition:
-            logger.debug("[" + str(type(py_xb_object_condition)) + "] is not present in the currently created object.")
-        else:
+        if py_xb_object_condition:
             func(*args)
 
     # noinspection PyMethodMayBeStatic
@@ -85,26 +82,80 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         pyxb_object: PcGtsType = original.tmp_type
         document: Document = original.shared_file_format_document
 
-        self._execute_if_present(pyxb_object.Page.TextRegion, document.add_region,
-                                 self.handle_text_region(pyxb_object.Page.TextRegion), "text")
+        # self._execute_if_present(pyxb_object.Page.TextRegion, document.add_region,
+        #                          self.handle_text_region(pyxb_object.Page.TextRegion), "text")
+        if self._is_present(pyxb_object.Page.TextRegion):
+            document = self.handle_text_region(pyxb_object.Page.TextRegion, document)
 
         original.shared_file_format_document = document
         return original
 
-    def handle_text_region(self, text_regions):
+    def handle_text_region(self, text_regions, document: Document) -> Document:
+        """
+        Problem: Text Regions in PageXML sind nicht eindeutig
+        -> können ein Wrapper für mehrere TextLines sein -> eigentlich eher als group id für baselines/andere text objects zu verstehen
+        -> können ein Wrapper für mehrere TextEquiv sein -> eigentlich eher als group id für andere Text objects
+        -> stehen für sich alleine -> realer Region type ohne andere sachen
 
-        print(str(type(text_regions)))
+        :param document:
+        :param text_regions:
+        :return:
+        """
+
         text_region: TextRegionType
         for text_region in text_regions:
-            text_lines = text_region.TextLine
-            text_line: TextLineType
-            for text_line in text_lines:
-                points = self.handle_coords_type(text_line.Coords)
-                print("asdf")
-            # points = text_line.Coords.points
-            # baseline = text_line.Baseline.points
-            # text_equiv = text_line.TextEquiv.Unicode
-            print("asdf")
+
+            if self._has_complex_subtype(text_region):
+                # this text regions has subtypes -> it only serves the purpose of beeing a group id for it's subtypes
+                logger.error("complec subtypes not implemented")
+                pass
+            else:
+                # this text region stands for itself without any further information
+                # -> it's added to document engine as text content
+                coordinates = self.handle_coords_type(text_region.Coords)
+                region_type: str = "text"
+                region_subtype = text_region.type
+
+                document.add_region(coordinates, region_type, region_subtype)
+
+            # text_lines = text_region.TextLine
+            # text_line: TextLineType
+            # for text_line in text_lines:
+            #     points = self.handle_coords_type(text_line.Coords)
+        return document
+
+    def _check_plural_binding_length(self, _plural_binding_object) -> int:
+        return len(_plural_binding_object)
+
+    def _has_complex_subtype(self, text_region: TextRegionType) -> bool:
+        length_of_all_types: int = self._check_plural_binding_length(
+            text_region.AdvertRegion) + self._check_plural_binding_length(
+            text_region.ChartRegion) + self._check_plural_binding_length(
+            text_region.ChemRegion) + self._check_plural_binding_length(
+            text_region.GraphicRegion) + self._check_plural_binding_length(
+            text_region.ImageRegion) + self._check_plural_binding_length(
+            text_region.LineDrawingRegion) + self._check_plural_binding_length(
+            text_region.MathsRegion) + self._check_plural_binding_length(
+            text_region.MusicRegion) + self._check_plural_binding_length(
+            text_region.NoiseRegion) + self._check_plural_binding_length(
+            text_region.SeparatorRegion) + self._check_plural_binding_length(
+            text_region.TableRegion) + self._check_plural_binding_length(
+            text_region.TextEquiv) + self._check_plural_binding_length(
+            text_region.TextLine) + self._check_plural_binding_length(
+            text_region.TextRegion) + self._check_plural_binding_length(
+            text_region.UnknownRegion)
+        return True if length_of_all_types == 0 else False
+
+    def _is_present(self, _plural_binding_object) -> bool:
+        return True if len(_plural_binding_object) != 0 else False
+
+    def handle_text_line(self):
+        pass
+
+    def handle_text_equiv(self):
+        pass
+
+    def handle_text_style(self):
         pass
 
     def handle_coords_type(self, coords: CoordsType) -> Sequence[Tuple[int, int]]:
@@ -125,8 +176,38 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
             points_shared_file_format.append(point)
         return points_shared_file_format
 
-    def handle_image_region(self, image_region_type) -> dict:
+    def handle_image_region(self, image_region_type) -> Region:
         pass
 
-    def handle_line_drawing_region(self, line_drawing_region_type) -> dict:
+    def handle_line_drawing_region(self, line_drawing_region_type) -> Region:
+        pass
+
+    def handle_graphic_region(self, graphic_region_type) -> Region:
+        pass
+
+    def handle_table_region(self, table_region_type) -> Region:
+        pass
+
+    def handle_chart_region(self, chart_region_type) -> Region:
+        pass
+
+    def handle_separator_region(self, separator_region_type) -> Region:
+        pass
+
+    def handle_maths_region(self, maths_region_type) -> Region:
+        pass
+
+    def handle_chem_region(self, chem_region_type) -> Region:
+        pass
+
+    def handle_music_region(self, music_region_type) -> Region:
+        pass
+
+    def handle_advert_region(self, advert_region_type) -> Region:
+        pass
+
+    def handle_noise_region(self, noise_region_type) -> Region:
+        pass
+
+    def handle_unknown_region(self, unknown_region_type) -> Region:
         pass
