@@ -86,8 +86,6 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         pyxb_object: PcGtsType = original.tmp_type
         document: Document = original.shared_file_format_document
 
-        # self._execute_if_present(pyxb_object.Page.TextRegion, document.add_region,
-        #                          self.handle_text_region(pyxb_object.Page.TextRegion), "text")
         if self._is_present(pyxb_object.Page.TextRegion):
             document = self.handle_text_region(pyxb_object.Page.TextRegion, document)
 
@@ -129,6 +127,15 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return document
 
     def _handle_complex_text_region_type(self, document: Document, text_region: TextRegionType) -> Document:
+        coordinates = self.handle_coords_type(text_region.Coords)
+        region_type: str = "text"
+        region_subtype = text_region.type
+        region_identification = document.add_region(coordinates, region_type, region_subtype)
+        # todo use this region identification for group reference to other regions
+        # todo enum erstellen mit mapping regions zu handling methods
+        # todo list erstellen mit allen present regions
+        # todo liste durchlaufen + element erstellen falls region present ist
+
         # text_lines = text_region.TextLine
         # text_line: TextLineType
         # for text_line in text_lines:
