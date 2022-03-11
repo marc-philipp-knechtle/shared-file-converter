@@ -16,6 +16,8 @@ from docrecjson.elements import Document, Region
 def execute_if_present(func):
     """
     Wraps a function call into a presence check. This is intended for a presence detection for pyXB objects.
+    requires to argument to be default returned as first position argument and the argument to check presence as the
+    second argument.
     :param func:
     :return: returns the second argument (first argument after self) of the function to allow usage in direct
     assignments.
