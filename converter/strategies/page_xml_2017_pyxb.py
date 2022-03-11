@@ -22,10 +22,10 @@ def execute_if_present(func):
     """
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        if type(args[1]) == _PluralBinding:
-            if len(args[1]) != 0:
+        if type(args[2]) == _PluralBinding:
+            if len(args[2]) != 0:
                 return func(*args, **kwargs)
-        elif args[1]:
+        elif args[2]:
             return func(*args, **kwargs)
         else:
             return args[1]
