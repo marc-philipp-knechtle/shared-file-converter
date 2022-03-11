@@ -1,13 +1,36 @@
+import functools
 import re
 from datetime import date
 from typing import Sequence, Tuple
 
 from loguru import logger
+# noinspection PyProtectedMember
+from pyxb.binding.content import _PluralBinding
 
 from converter.elements import PageConversionStrategy, ConverterDocument
 from converter.strategies.generated.page_xml.py_xb_2017 import PcGtsType, UserDefinedType, TextRegionType, CoordsType, \
     PointsType
 from docrecjson.elements import Document, Region
+
+
+def execute_if_present(func):
+    """
+    Wraps a function call into a presence check. This is intended for a presence detection for pyXB objects.
+    :param func:
+    :return: returns the second argument (first argument after self) of the function to allow usage in direct
+    assignments.
+    """
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        if type(args[1]) == _PluralBinding:
+            if len(args[1]) != 0:
+                return func(*args, **kwargs)
+        elif args[1]:
+            return func(*args, **kwargs)
+        else:
+            return args[1]
+
+    return wrapper
 
 
 class PageXML2017StrategyPyXB(PageConversionStrategy):
@@ -86,13 +109,13 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         pyxb_object: PcGtsType = original.tmp_type
         document: Document = original.shared_file_format_document
 
-        if self._is_present(pyxb_object.Page.TextRegion):
-            document = self.handle_text_region(pyxb_object.Page.TextRegion, document)
+        document = self.handle_text_regions(pyxb_object.Page.TextRegion, document)
 
         original.shared_file_format_document = document
         return original
 
-    def handle_text_region(self, text_regions, document: Document) -> Document:
+    @execute_if_present
+    def handle_text_regions(self, document: Document, text_regions) -> Document:
         """
         Problem: Text Regions in PageXML sind nicht eindeutig
         -> können ein Wrapper für mehrere TextLines sein -> eigentlich eher als group id für baselines/andere text objects zu verstehen
@@ -135,6 +158,8 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         # todo enum erstellen mit mapping regions zu handling methods
         # todo list erstellen mit allen present regions
         # todo liste durchlaufen + element erstellen falls region present ist
+
+        self.handle_text_lines(text_region.TextLine)
 
         # text_lines = text_region.TextLine
         # text_line: TextLineType
@@ -181,11 +206,9 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
             text_region.UnknownRegion)
         return True if length_of_all_types != 0 else False
 
-    def _is_present(self, _plural_binding_object) -> bool:
-        return True if len(_plural_binding_object) != 0 else False
-
-    def handle_text_line(self):
-        pass
+    @execute_if_present
+    def handle_text_lines(self, text_lines):
+        logger.debug("handle text lines")
 
     def handle_text_equiv(self):
         pass
