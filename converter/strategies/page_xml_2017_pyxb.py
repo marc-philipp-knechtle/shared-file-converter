@@ -119,6 +119,10 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         original.shared_file_format_document = document
         return original
 
+    """
+    Text Region Handling
+    """
+
     @execute_if_present
     def handle_text_regions(self, document: Document, text_regions) -> Document:
         """
@@ -268,6 +272,10 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
             point = (x, y)
             points_shared_file_format.append(point)
         return points_shared_file_format
+
+    """
+    Top Level Region handling
+    """
 
     def handle_image_region(self, image_region_type) -> Region:
         pass
