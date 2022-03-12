@@ -159,10 +159,6 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         region_type: str = "text"
         region_subtype = text_region.type
         region_identification: PolygonRegion = document.add_region(coordinates, region_type, region_subtype)
-        # todo use this region identification for group reference to other regions
-        # todo enum erstellen mit mapping regions zu handling methods
-        # todo list erstellen mit allen present regions
-        # todo liste durchlaufen + element erstellen falls region present ist
 
         document = self.handle_text_lines(document, text_region.TextLine, region_identification)
         # document = self.handle_text_equiv(document, text_region.TextEquiv, region_identification)
