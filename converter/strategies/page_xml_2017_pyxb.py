@@ -9,7 +9,7 @@ from pyxb.binding.content import _PluralBinding
 
 from converter.elements import PageConversionStrategy, ConverterDocument
 from converter.strategies.generated.page_xml.py_xb_2017 import PcGtsType, UserDefinedType, TextRegionType, CoordsType, \
-    PointsType, TextLineType, BaselineType
+    PointsType, TextLineType, BaselineType, TextEquivType, TextStyleType
 from docrecjson.elements import Document, Region, PolygonRegion, GroupRef
 
 
@@ -72,7 +72,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         if py_xb_object_condition:
             func(*args)
 
-    def _log_warning_not_processed_if_present(self, obj, property_name: str):
+    def _warn_if_present(self, obj, property_name: str):
         if obj:
             logger.warning(property_name + "= [" + str(obj) + "] is not further processed.")
 
@@ -147,7 +147,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
                 # -> it's added to document engine as text content
                 document = self._handle_simple_text_region_type(document, text_region)
 
-            self._log_warn_missing_simple_root_text_region_attributes(text_region)
+            self._warn_simple_text_region_root(text_region)
 
         return document
 
@@ -156,6 +156,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         region_type: str = "text"
         region_subtype = text_region.type
         document.add_region(coordinates, region_type, region_subtype)
+        document = self.handle_text_style(document, text_region.TextStyle)
         return document
 
     def _handle_complex_text_region_type(self, document: Document, text_region: TextRegionType) -> Document:
@@ -165,30 +166,26 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         region_identification: PolygonRegion = document.add_region(coordinates, region_type, region_subtype)
 
         document = self.handle_text_lines(document, text_region.TextLine, region_identification)
-        # document = self.handle_text_equiv(document, text_region.TextEquiv, region_identification)
-        # document = self.handle_text_style(document, text_region.TextStyle)
+        document = self.handle_text_equiv(document, text_region.TextEquiv, region_identification)
+        document = self.handle_text_style(document, text_region.TextStyle)
 
-        # text_lines = text_region.TextLine
-        # text_line: TextLineType
-        # for text_line in text_lines:
-        #     points = self.handle_coords_type(text_line.Coords)
         return document
 
-    def _log_warn_missing_simple_root_text_region_attributes(self, text_region):
-        self._log_warning_not_processed_if_present(text_region.align, "align")
-        self._log_warning_not_processed_if_present(text_region.comments, "comments")
-        self._log_warning_not_processed_if_present(text_region.continuation, "continuation")
-        self._log_warning_not_processed_if_present(text_region.custom, "custom")
-        self._log_warning_not_processed_if_present(text_region.indented, "indented")
-        self._log_warning_not_processed_if_present(text_region.leading, "leading")
-        self._log_warning_not_processed_if_present(text_region.orientation, "orientation")
-        self._log_warning_not_processed_if_present(text_region.primaryLanguage, "primaryLanguage")
-        self._log_warning_not_processed_if_present(text_region.primaryScript, "primaryScript")
-        self._log_warning_not_processed_if_present(text_region.production, "production")
-        self._log_warning_not_processed_if_present(text_region.readingDirection, "readingDirection")
-        self._log_warning_not_processed_if_present(text_region.readingOrientation, "readingOrientation")
-        self._log_warning_not_processed_if_present(text_region.secondaryLanguage, "secondaryLanguage")
-        self._log_warning_not_processed_if_present(text_region.textLineOrder, "textLineOrder")
+    def _warn_simple_text_region_root(self, text_region):
+        self._warn_if_present(text_region.align, "align")
+        self._warn_if_present(text_region.comments, "comments")
+        self._warn_if_present(text_region.continuation, "continuation")
+        self._warn_if_present(text_region.custom, "custom")
+        self._warn_if_present(text_region.indented, "indented")
+        self._warn_if_present(text_region.leading, "leading")
+        self._warn_if_present(text_region.orientation, "orientation")
+        self._warn_if_present(text_region.primaryLanguage, "primaryLanguage")
+        self._warn_if_present(text_region.primaryScript, "primaryScript")
+        self._warn_if_present(text_region.production, "production")
+        self._warn_if_present(text_region.readingDirection, "readingDirection")
+        self._warn_if_present(text_region.readingOrientation, "readingOrientation")
+        self._warn_if_present(text_region.secondaryLanguage, "secondaryLanguage")
+        self._warn_if_present(text_region.textLineOrder, "textLineOrder")
 
     def _len_plural_binding(self, _plural_binding_object: _PluralBinding) -> int:
         return len(_plural_binding_object)
@@ -225,28 +222,59 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
             if len(baseline_points) != 0:
                 document.add_baseline(points, group_ref)
 
-            self._log_warning_not_processed_if_present(text_line.id, "id")
-            self._log_warning_not_processed_if_present(text_line.primaryLanguage, "primaryLanguage")
-            self._log_warning_not_processed_if_present(text_line.primaryScript, "primaryScript")
-            self._log_warning_not_processed_if_present(text_line.secondaryScript, "secondaryScript")
-            self._log_warning_not_processed_if_present(text_line.readingDirection, "readingdirection")
-            self._log_warning_not_processed_if_present(text_line.production, "production")
-            self._log_warning_not_processed_if_present(text_line.custom, "custom")
-            self._log_warning_not_processed_if_present(text_line.comments, "comments")
+            self._warn_if_present(text_line.id, "id")
+            self._warn_if_present(text_line.primaryLanguage, "primaryLanguage")
+            self._warn_if_present(text_line.primaryScript, "primaryScript")
+            self._warn_if_present(text_line.secondaryScript, "secondaryScript")
+            self._warn_if_present(text_line.readingDirection, "readingdirection")
+            self._warn_if_present(text_line.production, "production")
+            self._warn_if_present(text_line.custom, "custom")
+            self._warn_if_present(text_line.comments, "comments")
 
-            self._log_warning_not_processed_if_present(text_line.Word, "word")
-            self._log_warning_not_processed_if_present(text_line.TextEquiv, "textEquiv")
-            self._log_warning_not_processed_if_present(text_line.TextStyle, "textStyle")
-            self._log_warning_not_processed_if_present(text_line.UserDefined, "userDefined")
+            self._warn_if_present(text_line.Word, "word")
+            self._warn_if_present(text_line.TextEquiv, "textEquiv")
+            self._warn_if_present(text_line.TextStyle, "textStyle")
+            self._warn_if_present(text_line.UserDefined, "userDefined")
 
         return document
 
     @execute_if_present
-    def handle_text_equiv(self, document: Document, reading_order: _PluralBinding) -> Document:
+    def handle_text_equiv(self, document: Document, text_equivs: _PluralBinding,
+                          group_ref: Optional[GroupRef] = None) -> Document:
+        text_equiv: TextEquivType
+        for text_equiv in text_equivs:
+            unicode: str = text_equiv.Unicode
+            document.add_text(unicode, group_ref)
+
+            self._warn_if_present(text_equiv.index, "index")
+            self._warn_if_present(text_equiv.conf, "confidence")
+            self._warn_if_present(text_equiv.dataType, "dataType")
+            self._warn_if_present(text_equiv.dataTypeDetails, "dataTypeDetails")
+            self._warn_if_present(text_equiv.comments, "comments")
+
         return document
 
     @execute_if_present
-    def handle_text_style(self, document: Document, text_style) -> Document:
+    def handle_text_style(self, document: Document, text_style: TextStyleType) -> Document:
+        self._warn_if_present(text_style.fontFamily, "fontFamily")
+        self._warn_if_present(text_style.serif, "serif")
+        self._warn_if_present(text_style.monospace, "monospace")
+        self._warn_if_present(text_style.fontSize, "fontSize")
+        self._warn_if_present(text_style.xHeight, "xHeight")
+        self._warn_if_present(text_style.kerning, "kerning")
+        self._warn_if_present(text_style.textColour, "textColour")
+        self._warn_if_present(text_style.textColourRgb, "textColourRgb")
+        self._warn_if_present(text_style.bgColour, "bgColour")
+        self._warn_if_present(text_style.bgColourRgb, "bgColourRgb")
+        self._warn_if_present(text_style.reverseVideo, "reverseVideo")
+        self._warn_if_present(text_style.bold, "bold")
+        self._warn_if_present(text_style.italic, "italic")
+        self._warn_if_present(text_style.underlined, "underlined")
+        self._warn_if_present(text_style.subscript, "subscript")
+        self._warn_if_present(text_style.superscript, "superscript")
+        self._warn_if_present(text_style.strikethrough, "strikethrough")
+        self._warn_if_present(text_style.smallCaps, "smallCaps")
+        self._warn_if_present(text_style.letterSpaced, "letterSpaced")
         return document
 
     def handle_coords_type(self, coords: CoordsType) -> Sequence[Tuple[int, int]]:
