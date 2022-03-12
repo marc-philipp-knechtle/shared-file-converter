@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pc:PcGts pcGtsId="idvalue0" xmlns:pc="http://schema.primaresearch.org/PAGE/gts/pagecontent/2017-07-15"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://schema.primaresearch.org/PAGE/gts/pagecontent/2017-07-15
+          http://schema.primaresearch.org/PAGE/gts/pagecontent/2017-07-15/pagecontent.xsd">
+    <pc:Metadata externalRef="">
+        <pc:Creator>pc:Creator</pc:Creator>
+        <pc:Created>2001-12-31T12:00:00</pc:Created>
+        <pc:LastChange>2001-12-31T12:00:00</pc:LastChange>
+        <pc:Comments>pc:Comments</pc:Comments>
+        <pc:UserDefined>
+            <pc:UserAttribute description="some user defined description" name="user-defined-name" type="xsd:string"
+                              value="user-defined-value"/>
+        </pc:UserDefined>
+    </pc:Metadata>
+    <pc:Page custom="" imageFilename="" imageHeight="0" imageWidth="0" primaryLanguage="Abkhaz"
+             primaryScript="Adlm - Adlam" readingDirection="left-to-right" secondaryLanguage="Abkhaz"
+             secondaryScript="Adlm - Adlam" textLineOrder="top-to-bottom" type="front-cover">
+        <pc:AlternativeImage comments="" filename=""/>
+        <pc:Border>
+            <pc:Coords points="123,456 123,456"/>
+        </pc:Border>
+        <pc:PrintSpace>
+            <pc:Coords points="123,456 123,456"/>
+        </pc:PrintSpace>
+        <pc:ReadingOrder>
+            <pc:OrderedGroup caption="" comments="" continuation="true" custom="" id="idvalue1" regionRef="idvalue0"
+                             type="paragraph">
+                <pc:UserDefined>
+                    <pc:UserAttribute description="" name="" type="xsd:string" value=""/>
+                </pc:UserDefined>
+                <pc:RegionRefIndexed index="0" regionRef="idvalue0"/>
+            </pc:OrderedGroup>
+        </pc:ReadingOrder>
+        <pc:Layers>
+            <pc:Layer caption="" id="idvalue2" zIndex="0">
+                <pc:RegionRef regionRef="idvalue0"/>
+            </pc:Layer>
+        </pc:Layers>
+        <pc:Relations>
+            <pc:Relation comments="" custom="" type="link">
+                <pc:RegionRef regionRef="idvalue0"/>
+                <pc:RegionRef regionRef="idvalue0"/>
+            </pc:Relation>
+        </pc:Relations>
+        <pc:UserDefined>
+            <pc:UserAttribute description="some-user-defined-description" name="some-user-defined-name"
+                              type="xsd:string" value="some-user-defined-value"/>
+        </pc:UserDefined>
+        <pc:TextRegion align="left" comments="some textRegionComments" continuation="true" custom="" id="idvalue3"
+                       indented="true" leading="0"
+                       orientation="0.0" primaryLanguage="Abkhaz" primaryScript="Adlm - Adlam" production="printed"
+                       readingDirection="left-to-right" readingOrientation="0.0" secondaryLanguage="Abkhaz"
+                       secondaryScript="Adlm - Adlam" textLineOrder="top-to-bottom" type="paragraph">
+            <pc:Coords points="123,456 123,456"/>
+            <pc:TextLine id="textlineid" primaryLanguage="Abkhaz" primaryScript="Adlm - Adlam"
+                         secondaryScript="Adlm - Adlam" readingDirection="bottom-to-top"
+                         production="handwritten-cursive" custom="custom" comments="comments">
+                <pc:Coords points="123,456 123,456"/>
+                <pc:Baseline points="123,456 123,456"/>
+                <pc:Word id="identifier" language="other" primaryScript="other" secondaryScript="other"
+                         readingDirection="bottom-to-top" production="other" custom="custom" comments="comments">
+                    <pc:Coords points="123,456 123,456"/>
+                    <pc:Glyph id="id">
+                        <pc:Coords points="123,456 123,456"/>
+                        <pc:Graphemes>
+                            <pc:Grapheme id="grapheme1" index="1" ligature="false" charType="base" custom="custom"
+                                         comments="comments">
+                                <pc:TextEquiv index="1" conf="0.5" dataType="other" dataTypeDetails="details"
+                                              comments="comments">
+                                    <pc:PlainText>asdf</pc:PlainText>
+                                    <pc:Unicode>asdf</pc:Unicode>
+                                </pc:TextEquiv>
+                                <pc:Coords points="123,456 123,456"/>
+                            </pc:Grapheme>
+                            <pc:NonPrintingChar id="id1" index="2" ligature="false" charType="base" custom="custom"
+                                                comments="comments">
+                                <pc:TextEquiv index="1" conf="0.5" dataType="other" dataTypeDetails="details"
+                                              comments="comments">
+                                    <pc:PlainText>asdf</pc:PlainText>
+                                    <pc:Unicode>asdf</pc:Unicode>
+                                </pc:TextEquiv>
+                            </pc:NonPrintingChar>
+                            <pc:GraphemeGroup id="id2" index="3" ligature="false" charType="base" custom="custom"
+                                              comments="comments">
+                                <pc:TextEquiv index="1" conf="0.5" dataType="other" dataTypeDetails="details"
+                                              comments="comments">
+                                    <pc:PlainText>asdf</pc:PlainText>
+                                    <pc:Unicode>asdf</pc:Unicode>
+                                </pc:TextEquiv>
+                                <pc:Grapheme id="id3" index="4">
+                                    <pc:Coords points="123,456 123,456"/>
+                                </pc:Grapheme>
+                                <pc:NonPrintingChar id="id4" index="2" ligature="false" charType="base" custom="custom"
+                                                    comments="comments">
+                                    <pc:TextEquiv index="1" conf="0.5" dataType="other" dataTypeDetails="details"
+                                                  comments="comments">
+                                        <pc:PlainText>asdf</pc:PlainText>
+                                        <pc:Unicode>asdf</pc:Unicode>
+                                    </pc:TextEquiv>
+                                </pc:NonPrintingChar>
+                            </pc:GraphemeGroup>
+                        </pc:Graphemes>
+                    </pc:Glyph>
+                    <pc:TextEquiv index="1" conf="0.5" dataType="other" dataTypeDetails="details" comments="comments">
+                        <pc:PlainText>asdf</pc:PlainText>
+                        <pc:Unicode>asdf</pc:Unicode>
+                    </pc:TextEquiv>
+                    <pc:TextStyle fontFamily="font" serif="false" monospace="false" fontSize="1.0" xHeight="3"
+                                  kerning="1"
+                                  textColour="black" textColourRgb="123123" bgColour="black" bgColourRgb="123123"
+                                  reverseVideo="false" bold="false" italic="false" underlined="false" subscript="false"
+                                  superscript="false" strikethrough="false" smallCaps="false" letterSpaced="false"/>
+                    <pc:UserDefined>
+                        <pc:UserAttribute description="some-user-defined-description" name="some-user-defined-name"
+                                          type="xsd:string" value="some-user-defined-value"/>
+                    </pc:UserDefined>
+                </pc:Word>
+                <pc:TextEquiv index="1" conf="0.5" dataType="other" dataTypeDetails="details" comments="comments">
+                    <pc:PlainText>asdf</pc:PlainText>
+                    <pc:Unicode>asdf</pc:Unicode>
+                </pc:TextEquiv>
+                <pc:TextStyle fontFamily="font" serif="false" monospace="false" fontSize="1.0" xHeight="3" kerning="1"
+                              textColour="black" textColourRgb="123123" bgColour="black" bgColourRgb="123123"
+                              reverseVideo="false" bold="false" italic="false" underlined="false" subscript="false"
+                              superscript="false" strikethrough="false" smallCaps="false" letterSpaced="false"/>
+                <pc:UserDefined>
+                    <pc:UserAttribute description="some-user-defined-description" name="some-user-defined-name"
+                                      type="xsd:string" value="some-user-defined-value"/>
+                </pc:UserDefined>
+            </pc:TextLine>
+            <!--            <pc:UserDefined>-->
+            <!--                <pc:UserAttribute description="" name="text-region-user-defined" type="xsd:string"-->
+            <!--                                  value="text-region-user-defined"/>-->
+            <!--            </pc:UserDefined>-->
+            <!--            <pc:Roles>-->
+            <!--                <pc:TableCellRole colSpan="0" columnIndex="0" rowIndex="0" rowSpan="0"/>-->
+            <!--            </pc:Roles>-->
+            <pc:TextEquiv comments="" conf="0.0" dataType="xsd:decimal" dataTypeDetails="" index="0">
+                <pc:PlainText>pc:PlainText</pc:PlainText>
+                <pc:Unicode>pc:Unicode</pc:Unicode>
+            </pc:TextEquiv>
+            <pc:TextStyle bgColour="black" bgColourRgb="0" bold="true" fontFamily="" fontSize="0.0" italic="true"
+                          kerning="0" letterSpaced="true" monospace="true" reverseVideo="true" serif="true"
+                          smallCaps="true" strikethrough="true" subscript="true" superscript="true" textColour="black"
+                          textColourRgb="0" underlined="true" xHeight="0"/>
+        </pc:TextRegion>
+    </pc:Page>
+</pc:PcGts>
