@@ -129,13 +129,6 @@
                                       type="xsd:string" value="some-user-defined-value"/>
                 </pc:UserDefined>
             </pc:TextLine>
-            <!--            <pc:UserDefined>-->
-            <!--                <pc:UserAttribute description="" name="text-region-user-defined" type="xsd:string"-->
-            <!--                                  value="text-region-user-defined"/>-->
-            <!--            </pc:UserDefined>-->
-            <!--            <pc:Roles>-->
-            <!--                <pc:TableCellRole colSpan="0" columnIndex="0" rowIndex="0" rowSpan="0"/>-->
-            <!--            </pc:Roles>-->
             <pc:TextEquiv comments="" conf="0.0" dataType="xsd:decimal" dataTypeDetails="" index="0">
                 <pc:PlainText>pc:PlainText</pc:PlainText>
                 <pc:Unicode>pc:Unicode</pc:Unicode>
