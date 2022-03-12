@@ -1,7 +1,7 @@
 import functools
 import re
 from datetime import date
-from typing import Sequence, Tuple
+from typing import Sequence, Tuple, Optional
 
 from loguru import logger
 # noinspection PyProtectedMember
@@ -9,8 +9,8 @@ from pyxb.binding.content import _PluralBinding
 
 from converter.elements import PageConversionStrategy, ConverterDocument
 from converter.strategies.generated.page_xml.py_xb_2017 import PcGtsType, UserDefinedType, TextRegionType, CoordsType, \
-    PointsType
-from docrecjson.elements import Document, Region
+    PointsType, TextLineType, BaselineType
+from docrecjson.elements import Document, Region, PolygonRegion, GroupRef
 
 
 def execute_if_present(func):
@@ -22,11 +22,14 @@ def execute_if_present(func):
     :return: returns the second argument (first argument after self) of the function to allow usage in direct
     assignments.
     """
+
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         if type(args[2]) == _PluralBinding:
             if len(args[2]) != 0:
                 return func(*args, **kwargs)
+            else:
+                return args[1]
         elif args[2]:
             return func(*args, **kwargs)
         else:
@@ -111,7 +114,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         pyxb_object: PcGtsType = original.tmp_type
         document: Document = original.shared_file_format_document
 
-        document = self.handle_text_regions(pyxb_object.Page.TextRegion, document)
+        document = self.handle_text_regions(document, pyxb_object.Page.TextRegion)
 
         original.shared_file_format_document = document
         return original
@@ -155,19 +158,20 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         coordinates = self.handle_coords_type(text_region.Coords)
         region_type: str = "text"
         region_subtype = text_region.type
-        region_identification = document.add_region(coordinates, region_type, region_subtype)
+        region_identification: PolygonRegion = document.add_region(coordinates, region_type, region_subtype)
         # todo use this region identification for group reference to other regions
         # todo enum erstellen mit mapping regions zu handling methods
         # todo list erstellen mit allen present regions
         # todo liste durchlaufen + element erstellen falls region present ist
 
-        self.handle_text_lines(text_region.TextLine)
+        document = self.handle_text_lines(document, text_region.TextLine, region_identification)
+        # document = self.handle_text_equiv(document, text_region.TextEquiv, region_identification)
+        # document = self.handle_text_style(document, text_region.TextStyle)
 
         # text_lines = text_region.TextLine
         # text_line: TextLineType
         # for text_line in text_lines:
         #     points = self.handle_coords_type(text_line.Coords)
-        logger.error("not implemented")
         return document
 
     def _log_warn_missing_simple_root_text_region_attributes(self, text_region):
@@ -209,14 +213,41 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return True if length_of_all_types != 0 else False
 
     @execute_if_present
-    def handle_text_lines(self, text_lines):
-        logger.debug("handle text lines")
+    def handle_text_lines(self, document: Document, text_lines: _PluralBinding,
+                          group_ref: Optional[GroupRef] = None) -> Document:
+        text_line: TextLineType
+        for text_line in text_lines:
+            points = self.handle_coords_type(text_line.Coords)
+            baseline_points = self.handle_baseline_type([], text_line.Baseline)
 
-    def handle_text_equiv(self):
-        pass
+            if len(points) != 0:
+                document.add_line_polygon(points, group_ref)
+            if len(baseline_points) != 0:
+                document.add_baseline(points, group_ref)
 
-    def handle_text_style(self):
-        pass
+            self._log_warning_not_processed_if_present(text_line.id, "id")
+            self._log_warning_not_processed_if_present(text_line.primaryLanguage, "primaryLanguage")
+            self._log_warning_not_processed_if_present(text_line.primaryScript, "primaryScript")
+            self._log_warning_not_processed_if_present(text_line.secondaryScript, "secondaryScript")
+            self._log_warning_not_processed_if_present(text_line.readingDirection, "readingdirection")
+            self._log_warning_not_processed_if_present(text_line.production, "production")
+            self._log_warning_not_processed_if_present(text_line.custom, "custom")
+            self._log_warning_not_processed_if_present(text_line.comments, "comments")
+
+            self._log_warning_not_processed_if_present(text_line.Word, "word")
+            self._log_warning_not_processed_if_present(text_line.TextEquiv, "textEquiv")
+            self._log_warning_not_processed_if_present(text_line.TextStyle, "textStyle")
+            self._log_warning_not_processed_if_present(text_line.UserDefined, "userDefined")
+
+        return document
+
+    @execute_if_present
+    def handle_text_equiv(self, document: Document, reading_order: _PluralBinding) -> Document:
+        return document
+
+    @execute_if_present
+    def handle_text_style(self, document: Document, text_style) -> Document:
+        return document
 
     def handle_coords_type(self, coords: CoordsType) -> Sequence[Tuple[int, int]]:
         """
@@ -224,7 +255,13 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         :param coords:
         :return:
         """
-        points: PointsType = coords.points
+        return self.handle_points_type(coords.points)
+
+    @execute_if_present
+    def handle_baseline_type(self, default_return, baseline: BaselineType):
+        return self.handle_points_type(baseline.points)
+
+    def handle_points_type(self, points: PointsType) -> Sequence[Tuple[int, int]]:
         coords_pairs = re.findall("([0-9]+,[0-9]+ )", str(points))
         pair: str
         points_shared_file_format = []
