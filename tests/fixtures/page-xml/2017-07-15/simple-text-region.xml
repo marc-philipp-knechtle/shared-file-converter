@@ -37,15 +37,12 @@
                 <pc:RegionRef regionRef="idvalue0"/>
             </pc:Layer>
         </pc:Layers>
-        <!--        Todo why is this non compatible with the schema-->
-        <!--        <pc:Relations>-->
-        <!--            <pc:Relation comments="" custom="" type="link">-->
-        <!--                <pc:RegionRef regionRef="idvalue0"/>-->
-        <!--                <pc:RegionRef regionRef="idvalue0"/>-->
-        <!--                <pc:RegionRef regionRef="idvalue0"/>-->
-        <!--                <pc:RegionRef regionRef="idvalue0"/>-->
-        <!--            </pc:Relation>-->
-        <!--        </pc:Relations>-->
+        <pc:Relations>
+            <pc:Relation comments="" custom="" type="link">
+                <pc:RegionRef regionRef="idvalue0"/>
+                <pc:RegionRef regionRef="idvalue0"/>
+            </pc:Relation>
+        </pc:Relations>
         <pc:UserDefined>
             <pc:UserAttribute description="some-user-defined-description" name="some-user-defined-name"
                               type="xsd:string" value="some-user-defined-value"/>
