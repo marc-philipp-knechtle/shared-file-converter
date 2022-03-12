@@ -186,7 +186,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         self._log_warning_not_processed_if_present(text_region.secondaryLanguage, "secondaryLanguage")
         self._log_warning_not_processed_if_present(text_region.textLineOrder, "textLineOrder")
 
-    def _check_plural_binding_length(self, _plural_binding_object) -> int:
+    def _check_plural_binding_length(self, _plural_binding_object: _PluralBinding) -> int:
         return len(_plural_binding_object)
 
     def _has_complex_subtype(self, text_region: TextRegionType) -> bool:
