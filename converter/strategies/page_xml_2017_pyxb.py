@@ -186,25 +186,25 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         self._log_warning_not_processed_if_present(text_region.secondaryLanguage, "secondaryLanguage")
         self._log_warning_not_processed_if_present(text_region.textLineOrder, "textLineOrder")
 
-    def _check_plural_binding_length(self, _plural_binding_object: _PluralBinding) -> int:
+    def _len_plural_binding(self, _plural_binding_object: _PluralBinding) -> int:
         return len(_plural_binding_object)
 
     def _has_complex_subtype(self, text_region: TextRegionType) -> bool:
-        length_of_all_types: int = self._check_plural_binding_length(
-            text_region.AdvertRegion) + self._check_plural_binding_length(
-            text_region.ChartRegion) + self._check_plural_binding_length(
-            text_region.ChemRegion) + self._check_plural_binding_length(
-            text_region.GraphicRegion) + self._check_plural_binding_length(
-            text_region.ImageRegion) + self._check_plural_binding_length(
-            text_region.LineDrawingRegion) + self._check_plural_binding_length(
-            text_region.MathsRegion) + self._check_plural_binding_length(
-            text_region.MusicRegion) + self._check_plural_binding_length(
-            text_region.NoiseRegion) + self._check_plural_binding_length(
-            text_region.SeparatorRegion) + self._check_plural_binding_length(
-            text_region.TableRegion) + self._check_plural_binding_length(
-            text_region.TextEquiv) + self._check_plural_binding_length(
-            text_region.TextLine) + self._check_plural_binding_length(
-            text_region.TextRegion) + self._check_plural_binding_length(
+        length_of_all_types: int = self._len_plural_binding(
+            text_region.AdvertRegion) + self._len_plural_binding(
+            text_region.ChartRegion) + self._len_plural_binding(
+            text_region.ChemRegion) + self._len_plural_binding(
+            text_region.GraphicRegion) + self._len_plural_binding(
+            text_region.ImageRegion) + self._len_plural_binding(
+            text_region.LineDrawingRegion) + self._len_plural_binding(
+            text_region.MathsRegion) + self._len_plural_binding(
+            text_region.MusicRegion) + self._len_plural_binding(
+            text_region.NoiseRegion) + self._len_plural_binding(
+            text_region.SeparatorRegion) + self._len_plural_binding(
+            text_region.TableRegion) + self._len_plural_binding(
+            text_region.TextEquiv) + self._len_plural_binding(
+            text_region.TextLine) + self._len_plural_binding(
+            text_region.TextRegion) + self._len_plural_binding(
             text_region.UnknownRegion)
         return True if length_of_all_types != 0 else False
 
