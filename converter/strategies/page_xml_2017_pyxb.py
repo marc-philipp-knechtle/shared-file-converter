@@ -6,12 +6,13 @@ from typing import Sequence, Tuple, Optional
 from loguru import logger
 # noinspection PyProtectedMember
 from pyxb.binding.content import _PluralBinding
+from pyxb.binding.datatypes import boolean
 
 from converter.elements import PageConversionStrategy, ConverterDocument
 from converter.strategies.generated.page_xml.py_xb_2017 import PcGtsType, UserDefinedType, TextRegionType, CoordsType, \
-    PointsType, TextLineType, BaselineType, TextEquivType, TextStyleType, PageType, ImageRegionType, \
-    LineDrawingRegionType, GraphicRegionType, TableRegionType, ChartRegionType, SeparatorRegionType, MathsRegionType, \
-    ChemRegionType, MusicRegionType, AdvertRegionType, NoiseRegionType, UnknownRegionType
+    PointsType, TextLineType, BaselineType, TextEquivType, TextStyleType, PageType, LineDrawingRegionType, \
+    GraphicRegionType, TableRegionType, ChartRegionType, SeparatorRegionType, MathsRegionType, \
+    ChemRegionType, MusicRegionType, AdvertRegionType, NoiseRegionType, UnknownRegionType, RegionType, ImageRegionType
 from docrecjson.elements import Document, PolygonRegion, GroupRef
 
 
@@ -76,7 +77,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
 
     # noinspection PyMethodMayBeStatic
     def _warn_if_present(self, obj, property_name: str):
-        if obj:
+        if type(obj) == boolean or obj:
             logger.warning(property_name + "= [" + str(obj) + "] is not further processed.")
 
     # noinspection PyMethodMayBeStatic
@@ -87,6 +88,19 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         for attribute in user_defined_metadata.UserAttribute:
             dct[str(attribute.name)] = str(attribute.value_)
         return dct
+
+    # noinspection PyMethodMayBeStatic
+    def handle_points_type(self, points: PointsType) -> Sequence[Tuple[int, int]]:
+        coords_pairs = re.findall("([0-9]+,[0-9]+ )", str(points))
+        pair: str
+        points_shared_file_format = []
+        for pair in coords_pairs:
+            pair_tuple = pair.split(",")
+            x = int(pair_tuple[0])
+            y = int(pair_tuple[1])
+            point = (x, y)
+            points_shared_file_format.append(point)
+        return points_shared_file_format
 
     def initialize(self, original: ConverterDocument) -> ConverterDocument:
         pyxb_object: PcGtsType = original.tmp_type
@@ -294,26 +308,51 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
     def handle_baseline_type(self, default_return, baseline: BaselineType):
         return self.handle_points_type(baseline.points)
 
-    # noinspection PyMethodMayBeStatic
-    def handle_points_type(self, points: PointsType) -> Sequence[Tuple[int, int]]:
-        coords_pairs = re.findall("([0-9]+,[0-9]+ )", str(points))
-        pair: str
-        points_shared_file_format = []
-        for pair in coords_pairs:
-            pair_tuple = pair.split(",")
-            x = int(pair_tuple[0])
-            y = int(pair_tuple[1])
-            point = (x, y)
-            points_shared_file_format.append(point)
-        return points_shared_file_format
-
     """
     Top Level Region handling
     """
 
+    def _warn_region_parent_elements(self, region_child_element: RegionType):
+        """
+        This method is used to warn if there are complex subregions in another region (except text_region).
+        This Conversion is currently not supported.
+        :param region_child_element: the Region to check for certain Region elements
+        """
+        self._warn_if_present(region_child_element.custom, "custom")
+        self._warn_if_present(region_child_element.comments, "comments")
+        self._warn_if_present(region_child_element.continuation, "continuation")
+
+        self._warn_if_present(region_child_element.UserDefined, "UserDefined")
+        self._warn_if_present(region_child_element.Roles, "Roles")
+        self._warn_if_present(region_child_element.TextRegion, "TextRegion")
+        self._warn_if_present(region_child_element.ImageRegion, "ImageRegion")
+        self._warn_if_present(region_child_element.LineDrawingRegion, "LineDrawingRegion")
+        self._warn_if_present(region_child_element.GraphicRegion, "GraphicRegion")
+        self._warn_if_present(region_child_element.TableRegion, "TableRegion")
+        self._warn_if_present(region_child_element.ChartRegion, "ChartRegion")
+        self._warn_if_present(region_child_element.SeparatorRegion, "SeparatorRegion")
+        self._warn_if_present(region_child_element.MathsRegion, "MathsRegion")
+        self._warn_if_present(region_child_element.ChemRegion, "ChemRegion")
+        self._warn_if_present(region_child_element.MusicRegion, "MusicRegion")
+        self._warn_if_present(region_child_element.AdvertRegion, "AdvertRegion")
+        self._warn_if_present(region_child_element.NoiseRegion, "NoiseRegion")
+        self._warn_if_present(region_child_element.UnknownRegion, "UnknownRegion")
+
     @execute_if_present
-    def handle_image_region(self, document: Document, image_region: ImageRegionType) -> Document:
-        self._warn_if_present(image_region, "image_region")
+    def handle_image_region(self, document: Document, image_regions: _PluralBinding) -> Document:
+
+        image_region: ImageRegionType
+        for image_region in image_regions:
+            coordinates = self.handle_points_type(image_region.Coords.points)
+            document.add_region(area=coordinates, region_type="image")
+
+            self._warn_if_present(image_region.orientation, "orientation")
+            self._warn_if_present(image_region.colourDepth, "colourDepth")
+            self._warn_if_present(image_region.bgColour, "bgColour")
+            self._warn_if_present(image_region.embText, "embText")
+
+            self._warn_region_parent_elements(image_region)
+
         return document
 
     @execute_if_present
