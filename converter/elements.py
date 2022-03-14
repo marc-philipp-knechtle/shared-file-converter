@@ -67,6 +67,15 @@ class PageXML2017StrategyGenerateDS(ConversionStrategy):
     I will therefore continue implementing the desired functionality with PyXB, not because of any knowledge of the
     inner workings, but only because of preference.
     But I'll leave this approach in this repository for an eventual later evaluation.
+
+    def test_generate_ds_conversion(input_filepath):
+    xml: str = reader.read_xml(input_filepath)
+    doc: ConverterDocument = ConverterDocument(input_filepath, xml,
+                                               tmp_type=generate_ds_2017.parse(input_filepath, silence=True))
+    logger.info("Started processing on file: [" + input_filepath + "]")
+    context = ConversionContext(PageXML2017StrategyGenerateDS(), doc)
+    document: Document = context.convert()
+
     """
 
     def initialize(self, original: ConverterDocument):
