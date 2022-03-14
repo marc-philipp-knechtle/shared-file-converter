@@ -72,6 +72,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         if py_xb_object_condition:
             func(*args)
 
+    # noinspection PyMethodMayBeStatic
     def _warn_if_present(self, obj, property_name: str):
         if obj:
             logger.warning(property_name + "= [" + str(obj) + "] is not further processed.")
@@ -175,6 +176,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         self._warn_if_present(text_region.secondaryLanguage, "secondaryLanguage")
         self._warn_if_present(text_region.textLineOrder, "textLineOrder")
 
+    # noinspection PyMethodMayBeStatic
     def _len_plural_binding(self, _plural_binding_object: _PluralBinding) -> int:
         return len(_plural_binding_object)
 
