@@ -20,17 +20,23 @@ def write_to_log(log_output: bool, doc: Document):
 
 def write_to_file(filepath: str, dct: dict):
     if filepath is not None:
-        with open(filename_considered_duplicates(filepath), "w") as file:
+        path_considered_duplicates: str = file_considered_duplicates(filepath)
+        with open(path_considered_duplicates, "w") as file:
             json.dump(dct, file)
+            logger.info("wrote processed contents into: [" + filepath + "]")
 
 
-def filename_considered_duplicates(filepath: str) -> str:
+def file_considered_duplicates(filepath: str) -> str:
     """
     :param filepath: a full filepath
-    :return: a new filepath if the specified filepath already exists, else the specified filepath with filepath
+    :return: a new filepath if the specified filepath already exists, else the given filepath
     """
     counter: int = 1
-    filepath, file_extension = os.path.splitext(os.path.basename(filepath))
+    filepath, file_extension = os.path.splitext(filepath)
+    if file_extension != ".json":
+        raise RuntimeError(
+            "The specified file doesn't have the correct extension for this application. "
+            "The file extension should be [.json], but it is: [" + file_extension + "]")
     base_filepath: str = filepath
     while os.path.isfile(filepath + file_extension):
         filepath = os.path.join(base_filepath + " (" + str(counter) + ")")
