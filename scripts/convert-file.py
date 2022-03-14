@@ -1,14 +1,13 @@
-import json
-import os
 import sys
 from argparse import Namespace
 
 from loguru import logger
 
-from utility_argparse import *
 from converter.validator.reader import handle_incoming_file
 from database.db import JsonDBStorage
 from docrecjson.elements import Document
+from scripts import utility
+from utility_argparse import *
 
 logger.remove()
 # add new custom loggers
@@ -42,40 +41,9 @@ def main(args: Namespace):
 
     doc: Document = handle_incoming_file(input_filepath)
 
-    write_to_log(log_output, doc)
-    write_to_db(args, doc)
-    write_to_file(output_filepath, doc.to_dict())
-
-
-def write_to_db(args: Namespace, doc: Document):
-    if args.db_connection is not None:
-        db = JsonDBStorage(args.db_connection, args.db_database, args.db_collection)
-        db.get_collection().insert_one(doc.to_dict())
-
-
-def write_to_log(log_output: bool, doc: Document):
-    if log_output:
-        logger.info(json.dumps(doc.to_dict(), indent=4))
-
-
-def write_to_file(filepath: str, dct: dict):
-    if filepath is not None:
-        with open(filename_considered_duplicates(filepath), "w") as file:
-            json.dump(dct, file)
-
-
-def filename_considered_duplicates(filepath: str) -> str:
-    """
-    :param filepath: a full filepath
-    :return: a new filepath if the specified filepath already exists, else the specified filepath with filepath
-    """
-    counter: int = 1
-    filepath, file_extension = os.path.splitext(os.path.basename(filepath))
-    base_filepath: str = filepath
-    while os.path.isfile(filepath + file_extension):
-        filepath = os.path.join(base_filepath + " (" + str(counter) + ")")
-        counter += 1
-    return filepath + file_extension
+    utility.write_to_log(log_output, doc)
+    utility.write_to_db(args, doc, JsonDBStorage(args.db_connection, args.db_database, args.db_collection))
+    utility.write_to_file(output_filepath, doc.to_dict())
 
 
 if __name__ == "__main__":
