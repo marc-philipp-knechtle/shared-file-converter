@@ -24,4 +24,3 @@ def add_log_args(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
     parser.add_argument("-log", "--log_output", type=bool, default=False,
                         help="Info-logs the computed json-dict file.")
     return parser
-
