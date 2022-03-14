@@ -9,8 +9,8 @@ from pyxb.binding.content import _PluralBinding
 
 from converter.elements import PageConversionStrategy, ConverterDocument
 from converter.strategies.generated.page_xml.py_xb_2017 import PcGtsType, UserDefinedType, TextRegionType, CoordsType, \
-    PointsType, TextLineType, BaselineType, TextEquivType, TextStyleType
-from docrecjson.elements import Document, Region, PolygonRegion, GroupRef
+    PointsType, TextLineType, BaselineType, TextEquivType, TextStyleType, PageType, ImageRegionType
+from docrecjson.elements import Document, PolygonRegion, GroupRef
 
 
 def execute_if_present(func):
@@ -112,9 +112,22 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
 
     def add_regions(self, original: ConverterDocument) -> ConverterDocument:
         pyxb_object: PcGtsType = original.tmp_type
+        page: PageType = pyxb_object.Page
         document: Document = original.shared_file_format_document
 
         document = self.handle_text_regions(document, pyxb_object.Page.TextRegion)
+        document = self.handle_image_region(document, page.ImageRegion)
+        document = self.handle_line_drawing_region(document, page.LineDrawingRegion)
+        document = self.handle_graphic_region(document, page.GraphicRegion)
+        document = self.handle_table_region(document, page.TableRegion)
+        document = self.handle_chart_region(document, page.ChartRegion)
+        document = self.handle_separator_region(document, page.SeparatorRegion)
+        document = self.handle_maths_region(document, page.MathsRegion)
+        document = self.handle_chem_region(document, page.ChemRegion)
+        document = self.handle_music_region(document, page.MusicRegion)
+        document = self.handle_advert_region(document, page.AdvertRegion)
+        document = self.handle_noise_region(document, page.NoiseRegion)
+        document = self.handle_unknown_region(document, page.UnknownRegion)
 
         original.shared_file_format_document = document
         return original
@@ -296,38 +309,50 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
     Top Level Region handling
     """
 
-    def handle_image_region(self, image_region_type) -> Region:
+    @execute_if_present
+    def handle_image_region(self, document: Document, image_region: ImageRegionType) -> Document:
         pass
 
-    def handle_line_drawing_region(self, line_drawing_region_type) -> Region:
+    @execute_if_present
+    def handle_line_drawing_region(self, document: Document, line_drawing_region) -> Document:
         pass
 
-    def handle_graphic_region(self, graphic_region_type) -> Region:
+    @execute_if_present
+    def handle_graphic_region(self, document: Document, graphic_region) -> Document:
         pass
 
-    def handle_table_region(self, table_region_type) -> Region:
+    @execute_if_present
+    def handle_table_region(self, document: Document, table_region) -> Document:
         pass
 
-    def handle_chart_region(self, chart_region_type) -> Region:
+    @execute_if_present
+    def handle_chart_region(self, document: Document, chart_region) -> Document:
         pass
 
-    def handle_separator_region(self, separator_region_type) -> Region:
+    @execute_if_present
+    def handle_separator_region(self, document: Document, separator_region) -> Document:
         pass
 
-    def handle_maths_region(self, maths_region_type) -> Region:
+    @execute_if_present
+    def handle_maths_region(self, document: Document, maths_region) -> Document:
         pass
 
-    def handle_chem_region(self, chem_region_type) -> Region:
+    @execute_if_present
+    def handle_chem_region(self, document: Document, chem_region) -> Document:
         pass
 
-    def handle_music_region(self, music_region_type) -> Region:
+    @execute_if_present
+    def handle_music_region(self, document: Document, music_region) -> Document:
         pass
 
-    def handle_advert_region(self, advert_region_type) -> Region:
+    @execute_if_present
+    def handle_advert_region(self, document: Document, advert_region) -> Document:
         pass
 
-    def handle_noise_region(self, noise_region_type) -> Region:
+    @execute_if_present
+    def handle_noise_region(self, document: Document, noise_region) -> Document:
         pass
 
-    def handle_unknown_region(self, unknown_region_type) -> Region:
+    @execute_if_present
+    def handle_unknown_region(self, document: Document, unknown_region) -> Document:
         pass

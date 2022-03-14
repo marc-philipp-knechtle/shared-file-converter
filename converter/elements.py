@@ -53,11 +53,51 @@ class PageConversionStrategy(ConversionStrategy, ABC):
         pass
 
     @abstractmethod
-    def handle_image_region(self, image_region_type) -> dict:
+    def handle_image_region(self, document: Document, image_region) -> Document:
         pass
 
     @abstractmethod
-    def handle_line_drawing_region(self, line_drawing_region_type) -> dict:
+    def handle_line_drawing_region(self, document: Document, line_drawing_region) -> Document:
+        pass
+
+    @abstractmethod
+    def handle_graphic_region(self, document: Document, graphic_region) -> Document:
+        pass
+
+    @abstractmethod
+    def handle_table_region(self, document: Document, table_region) -> Document:
+        pass
+
+    @abstractmethod
+    def handle_chart_region(self, document: Document, chart_region) -> Document:
+        pass
+
+    @abstractmethod
+    def handle_separator_region(self, document: Document, separator_region) -> Document:
+        pass
+
+    @abstractmethod
+    def handle_maths_region(self, document: Document, maths_region) -> Document:
+        pass
+
+    @abstractmethod
+    def handle_chem_region(self, document: Document, chem_region) -> Document:
+        pass
+
+    @abstractmethod
+    def handle_music_region(self, document: Document, music_region) -> Document:
+        pass
+
+    @abstractmethod
+    def handle_advert_region(self, document: Document, advert_region) -> Document:
+        pass
+
+    @abstractmethod
+    def handle_noise_region(self, document: Document, noise_region) -> Document:
+        pass
+
+    @abstractmethod
+    def handle_unknown_region(self, document: Document, unknown_region) -> Document:
         pass
 
 
