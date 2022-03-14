@@ -90,7 +90,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return dct
 
     # noinspection PyMethodMayBeStatic
-    def handle_points_type(self, points: PointsType) -> Sequence[Tuple[int, int]]:
+    def _handle_points_type(self, points: PointsType) -> Sequence[Tuple[int, int]]:
         coords_pairs = re.findall("([0-9]+,[0-9]+ )", str(points))
         pair: str
         points_shared_file_format = []
@@ -302,11 +302,11 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         :param coords:
         :return:
         """
-        return self.handle_points_type(coords.points)
+        return self._handle_points_type(coords.points)
 
     @execute_if_present
     def handle_baseline_type(self, default_return, baseline: BaselineType):
-        return self.handle_points_type(baseline.points)
+        return self._handle_points_type(baseline.points)
 
     """
     Top Level Region handling
@@ -342,7 +342,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
     def handle_image_region(self, document: Document, image_regions: _PluralBinding) -> Document:
         image_region: ImageRegionType
         for image_region in image_regions:
-            coordinates = self.handle_points_type(image_region.Coords.points)
+            coordinates = self._handle_points_type(image_region.Coords.points)
             document.add_region(area=coordinates, region_type="image")
 
             self._warn_if_present(image_region.orientation, "orientation")
@@ -358,7 +358,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
     def handle_line_drawing_region(self, document: Document, line_drawing_regions: _PluralBinding) -> Document:
         line_drawing_region: LineDrawingRegionType
         for line_drawing_region in line_drawing_regions:
-            coordinates = self.handle_points_type(line_drawing_region.Coords.points)
+            coordinates = self._handle_points_type(line_drawing_region.Coords.points)
             document.add_region(area=coordinates, region_type="line_drawing")
 
             self._warn_if_present(line_drawing_region.orientation, "orientation")
@@ -374,7 +374,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
     def handle_graphic_region(self, document: Document, graphic_regions: _PluralBinding) -> Document:
         graphic_region: GraphicRegionType
         for graphic_region in graphic_regions:
-            coordinates = self.handle_points_type(graphic_region.Coords.points)
+            coordinates = self._handle_points_type(graphic_region.Coords.points)
             document.add_region(area=coordinates, region_type="graphic")
 
             self._warn_if_present(graphic_region.orientation, "orientation")
@@ -390,7 +390,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
     def handle_table_region(self, document: Document, table_regions: _PluralBinding) -> Document:
         table_region: TableRegionType
         for table_region in table_regions:
-            coordinates = self.handle_points_type(table_region.Coords.points)
+            coordinates = self._handle_points_type(table_region.Coords.points)
             document.add_region(area=coordinates, region_type="table")
 
             self._warn_if_present(table_region.orientation, "orientation")
@@ -408,7 +408,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
     def handle_chart_region(self, document: Document, chart_regions: _PluralBinding) -> Document:
         chart_region: ChartRegionType
         for chart_region in chart_regions:
-            coordinates = self.handle_points_type(chart_region.Coords.points)
+            coordinates = self._handle_points_type(chart_region.Coords.points)
             document.add_region(area=coordinates, region_type="chart")
 
             self._warn_if_present(chart_region.orientation, "orientation")
@@ -425,7 +425,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
     def handle_separator_region(self, document: Document, separator_regions: _PluralBinding) -> Document:
         separator_region: SeparatorRegionType
         for separator_region in separator_regions:
-            coordinates = self.handle_points_type(separator_region.Coords.points)
+            coordinates = self._handle_points_type(separator_region.Coords.points)
             document.add_region(area=coordinates, region_type="separator")
 
             self._warn_if_present(separator_region.orientation, "orientation")
@@ -438,7 +438,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
     def handle_maths_region(self, document: Document, maths_regions: _PluralBinding) -> Document:
         maths_region: MathsRegionType
         for maths_region in maths_regions:
-            coordinates = self.handle_points_type(maths_region.Coords.points)
+            coordinates = self._handle_points_type(maths_region.Coords.points)
             document.add_region(area=coordinates, region_type="maths")
 
             self._warn_if_present(maths_region.orientation, "orientation")
@@ -451,7 +451,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
     def handle_chem_region(self, document: Document, chem_regions: _PluralBinding) -> Document:
         chem_region: ChemRegionType
         for chem_region in chem_regions:
-            coordinates = self.handle_points_type(chem_region.Coords.points)
+            coordinates = self._handle_points_type(chem_region.Coords.points)
             document.add_region(area=coordinates, region_type="chem")
 
             self._warn_if_present(chem_region.orientation, "orientation")
@@ -464,7 +464,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
     def handle_music_region(self, document: Document, music_regions: _PluralBinding) -> Document:
         music_region: MusicRegionType
         for music_region in music_regions:
-            coordinates = self.handle_points_type(music_region.Coords.points)
+            coordinates = self._handle_points_type(music_region.Coords.points)
             document.add_region(area=coordinates, region_type="music")
 
             self._warn_if_present(music_region.orientation, "orientation")
@@ -477,7 +477,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
     def handle_advert_region(self, document: Document, advert_regions: _PluralBinding) -> Document:
         advert_region: AdvertRegionType
         for advert_region in advert_regions:
-            coordinates = self.handle_points_type(advert_region.Coords.points)
+            coordinates = self._handle_points_type(advert_region.Coords.points)
             document.add_region(area=coordinates, region_type="advert")
 
             self._warn_if_present(advert_region.orientation, "orientation")
@@ -490,7 +490,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
     def handle_noise_region(self, document: Document, noise_regions: _PluralBinding) -> Document:
         noise_region: NoiseRegionType
         for noise_region in noise_regions:
-            coordinates = self.handle_points_type(noise_region.Coords.points)
+            coordinates = self._handle_points_type(noise_region.Coords.points)
             document.add_region(area=coordinates, region_type="noise")
 
             self._warn_region_parent_elements(noise_region)
@@ -500,7 +500,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
     def handle_unknown_region(self, document: Document, unknown_regions: _PluralBinding) -> Document:
         unknown_region: UnknownRegionType
         for unknown_region in unknown_regions:
-            coordinates = self.handle_points_type(unknown_region.Coords.points)
+            coordinates = self._handle_points_type(unknown_region.Coords.points)
             document.add_region(area=coordinates, region_type="unknown")
 
             self._warn_region_parent_elements(unknown_region)
