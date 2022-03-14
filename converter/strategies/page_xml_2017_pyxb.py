@@ -277,6 +277,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
     def handle_baseline_type(self, default_return, baseline: BaselineType):
         return self.handle_points_type(baseline.points)
 
+    # noinspection PyMethodMayBeStatic
     def handle_points_type(self, points: PointsType) -> Sequence[Tuple[int, int]]:
         coords_pairs = re.findall("([0-9]+,[0-9]+ )", str(points))
         pair: str
