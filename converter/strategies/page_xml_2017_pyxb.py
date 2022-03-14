@@ -78,7 +78,6 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
 
     # noinspection PyMethodMayBeStatic
     def _create_user_defined_metadata(self, user_defined_metadata: UserDefinedType) -> dict:
-        # todo mitigate the necessity for this behaviour or create an abstract function which performs this check
         if user_defined_metadata is None:
             return {}
         dct = {}
