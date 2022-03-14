@@ -159,7 +159,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
 
         return document
 
-    def _warn_simple_text_region_root(self, text_region):
+    def _warn_simple_text_region_root(self, text_region: TextRegionType):
         self._warn_if_present(text_region.align, "align")
         self._warn_if_present(text_region.comments, "comments")
         self._warn_if_present(text_region.continuation, "continuation")
