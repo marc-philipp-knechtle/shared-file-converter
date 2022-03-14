@@ -125,17 +125,6 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
 
     @execute_if_present
     def handle_text_regions(self, document: Document, text_regions) -> Document:
-        """
-        Problem: Text Regions in PageXML sind nicht eindeutig
-        -> können ein Wrapper für mehrere TextLines sein -> eigentlich eher als group id für baselines/andere text objects zu verstehen
-        -> können ein Wrapper für mehrere TextEquiv sein -> eigentlich eher als group id für andere Text objects
-        -> stehen für sich alleine -> realer Region type ohne andere sachen
-
-        :param document:
-        :param text_regions:
-        :return:
-        """
-
         text_region: TextRegionType
         for text_region in text_regions:
             if self._has_complex_subtype(text_region):
