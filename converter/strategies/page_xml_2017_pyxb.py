@@ -10,7 +10,8 @@ from pyxb.binding.content import _PluralBinding
 from converter.elements import PageConversionStrategy, ConverterDocument
 from converter.strategies.generated.page_xml.py_xb_2017 import PcGtsType, UserDefinedType, TextRegionType, CoordsType, \
     PointsType, TextLineType, BaselineType, TextEquivType, TextStyleType, PageType, ImageRegionType, \
-    LineDrawingRegionType, GraphicRegionType
+    LineDrawingRegionType, GraphicRegionType, TableRegionType, ChartRegionType, SeparatorRegionType, MathsRegionType, \
+    ChemRegionType, MusicRegionType, AdvertRegionType, NoiseRegionType, UnknownRegionType
 from docrecjson.elements import Document, PolygonRegion, GroupRef
 
 
@@ -326,46 +327,46 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return document
 
     @execute_if_present
-    def handle_table_region(self, document: Document, table_region) -> Document:
+    def handle_table_region(self, document: Document, table_region: TableRegionType) -> Document:
         self._warn_if_present(table_region, "table_region")
         return document
 
     @execute_if_present
-    def handle_chart_region(self, document: Document, chart_region) -> Document:
+    def handle_chart_region(self, document: Document, chart_region: ChartRegionType) -> Document:
         self._warn_if_present(chart_region, "chart_region")
         return document
 
     @execute_if_present
-    def handle_separator_region(self, document: Document, separator_region) -> Document:
+    def handle_separator_region(self, document: Document, separator_region: SeparatorRegionType) -> Document:
         self._warn_if_present(separator_region, "separator_region")
         return document
 
     @execute_if_present
-    def handle_maths_region(self, document: Document, maths_region) -> Document:
+    def handle_maths_region(self, document: Document, maths_region: MathsRegionType) -> Document:
         self._warn_if_present(maths_region, "maths_region")
         return document
 
     @execute_if_present
-    def handle_chem_region(self, document: Document, chem_region) -> Document:
+    def handle_chem_region(self, document: Document, chem_region: ChemRegionType) -> Document:
         self._warn_if_present(chem_region, "chem_region")
         return document
 
     @execute_if_present
-    def handle_music_region(self, document: Document, music_region) -> Document:
+    def handle_music_region(self, document: Document, music_region: MusicRegionType) -> Document:
         self._warn_if_present(music_region, "music_region")
         return document
 
     @execute_if_present
-    def handle_advert_region(self, document: Document, advert_region) -> Document:
+    def handle_advert_region(self, document: Document, advert_region: AdvertRegionType) -> Document:
         self._warn_if_present(advert_region, "advert_region")
         return document
 
     @execute_if_present
-    def handle_noise_region(self, document: Document, noise_region) -> Document:
+    def handle_noise_region(self, document: Document, noise_region: NoiseRegionType) -> Document:
         self._warn_if_present(noise_region, "noise_region")
         return document
 
     @execute_if_present
-    def handle_unknown_region(self, document: Document, unknown_region) -> Document:
+    def handle_unknown_region(self, document: Document, unknown_region: UnknownRegionType) -> Document:
         self._warn_if_present(unknown_region, "unknown_region")
         return document
