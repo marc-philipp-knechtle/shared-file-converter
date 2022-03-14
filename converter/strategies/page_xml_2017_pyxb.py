@@ -371,51 +371,137 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return document
 
     @execute_if_present
-    def handle_graphic_region(self, document: Document, graphic_region: GraphicRegionType) -> Document:
-        self._warn_if_present(graphic_region, "graphic_region")
+    def handle_graphic_region(self, document: Document, graphic_regions: _PluralBinding) -> Document:
+        graphic_region: GraphicRegionType
+        for graphic_region in graphic_regions:
+            coordinates = self.handle_points_type(graphic_region.Coords.points)
+            document.add_region(area=coordinates, region_type="graphic")
+
+            self._warn_if_present(graphic_region.orientation, "orientation")
+            self._warn_if_present(graphic_region.type, "type")
+            self._warn_if_present(graphic_region.numColours, "numColours")
+            self._warn_if_present(graphic_region.embText, "embText")
+
+            self._warn_region_parent_elements(graphic_region)
+
         return document
 
     @execute_if_present
-    def handle_table_region(self, document: Document, table_region: TableRegionType) -> Document:
-        self._warn_if_present(table_region, "table_region")
+    def handle_table_region(self, document: Document, table_regions: _PluralBinding) -> Document:
+        table_region: TableRegionType
+        for table_region in table_regions:
+            coordinates = self.handle_points_type(table_region.Coords.points)
+            document.add_region(area=coordinates, region_type="table")
+
+            self._warn_if_present(table_region.orientation, "orientation")
+            self._warn_if_present(table_region.rows, "rows")
+            self._warn_if_present(table_region.columns, "columns")
+            self._warn_if_present(table_region.lineColour, "colour")
+            self._warn_if_present(table_region.bgColour, "bgColour")
+            self._warn_if_present(table_region.lineSeparators, "lineSeparators")
+            self._warn_if_present(table_region.embText, "embText")
+
+            self._warn_region_parent_elements(table_region)
         return document
 
     @execute_if_present
-    def handle_chart_region(self, document: Document, chart_region: ChartRegionType) -> Document:
-        self._warn_if_present(chart_region, "chart_region")
+    def handle_chart_region(self, document: Document, chart_regions: _PluralBinding) -> Document:
+        chart_region: ChartRegionType
+        for chart_region in chart_regions:
+            coordinates = self.handle_points_type(chart_region.Coords.points)
+            document.add_region(area=coordinates, region_type="chart")
+
+            self._warn_if_present(chart_region.orientation, "orientation")
+            self._warn_if_present(chart_region.type, "type")
+            self._warn_if_present(chart_region.numColours, "numColours")
+            self._warn_if_present(chart_region.bgColour, "bgColour")
+            self._warn_if_present(chart_region.embText, "embText")
+
+            self._warn_region_parent_elements(chart_region)
+
         return document
 
     @execute_if_present
-    def handle_separator_region(self, document: Document, separator_region: SeparatorRegionType) -> Document:
-        self._warn_if_present(separator_region, "separator_region")
+    def handle_separator_region(self, document: Document, separator_regions: _PluralBinding) -> Document:
+        separator_region: SeparatorRegionType
+        for separator_region in separator_regions:
+            coordinates = self.handle_points_type(separator_region.Coords.points)
+            document.add_region(area=coordinates, region_type="separator")
+
+            self._warn_if_present(separator_region.orientation, "orientation")
+            self._warn_if_present(separator_region.colour, "colour")
+
+            self._warn_region_parent_elements(separator_region)
         return document
 
     @execute_if_present
-    def handle_maths_region(self, document: Document, maths_region: MathsRegionType) -> Document:
-        self._warn_if_present(maths_region, "maths_region")
+    def handle_maths_region(self, document: Document, maths_regions: _PluralBinding) -> Document:
+        maths_region: MathsRegionType
+        for maths_region in maths_regions:
+            coordinates = self.handle_points_type(maths_region.Coords.points)
+            document.add_region(area=coordinates, region_type="maths")
+
+            self._warn_if_present(maths_region.orientation, "orientation")
+            self._warn_if_present(maths_region.bgColour, "bgColour")
+
+            self._warn_region_parent_elements(maths_region)
         return document
 
     @execute_if_present
-    def handle_chem_region(self, document: Document, chem_region: ChemRegionType) -> Document:
-        self._warn_if_present(chem_region, "chem_region")
+    def handle_chem_region(self, document: Document, chem_regions: _PluralBinding) -> Document:
+        chem_region: ChemRegionType
+        for chem_region in chem_regions:
+            coordinates = self.handle_points_type(chem_region.Coords.points)
+            document.add_region(area=coordinates, region_type="chem")
+
+            self._warn_if_present(chem_region.orientation, "orientation")
+            self._warn_if_present(chem_region.bgColour, "bgColour")
+
+            self._warn_region_parent_elements(chem_region)
         return document
 
     @execute_if_present
-    def handle_music_region(self, document: Document, music_region: MusicRegionType) -> Document:
-        self._warn_if_present(music_region, "music_region")
+    def handle_music_region(self, document: Document, music_regions: _PluralBinding) -> Document:
+        music_region: MusicRegionType
+        for music_region in music_regions:
+            coordinates = self.handle_points_type(music_region.Coords.points)
+            document.add_region(area=coordinates, region_type="music")
+
+            self._warn_if_present(music_region.orientation, "orientation")
+            self._warn_if_present(music_region.bgColour, "bgColour")
+
+            self._warn_region_parent_elements(music_region)
         return document
 
     @execute_if_present
-    def handle_advert_region(self, document: Document, advert_region: AdvertRegionType) -> Document:
-        self._warn_if_present(advert_region, "advert_region")
+    def handle_advert_region(self, document: Document, advert_regions: _PluralBinding) -> Document:
+        advert_region: AdvertRegionType
+        for advert_region in advert_regions:
+            coordinates = self.handle_points_type(advert_region.Coords.points)
+            document.add_region(area=coordinates, region_type="advert")
+
+            self._warn_if_present(advert_region.orientation, "orientation")
+            self._warn_if_present(advert_region.bgColour, "bgColour")
+
+            self._warn_region_parent_elements(advert_region)
         return document
 
     @execute_if_present
-    def handle_noise_region(self, document: Document, noise_region: NoiseRegionType) -> Document:
-        self._warn_if_present(noise_region, "noise_region")
+    def handle_noise_region(self, document: Document, noise_regions: _PluralBinding) -> Document:
+        noise_region: NoiseRegionType
+        for noise_region in noise_regions:
+            coordinates = self.handle_points_type(noise_region.Coords.points)
+            document.add_region(area=coordinates, region_type="noise")
+
+            self._warn_region_parent_elements(noise_region)
         return document
 
     @execute_if_present
-    def handle_unknown_region(self, document: Document, unknown_region: UnknownRegionType) -> Document:
-        self._warn_if_present(unknown_region, "unknown_region")
+    def handle_unknown_region(self, document: Document, unknown_regions: _PluralBinding) -> Document:
+        unknown_region: UnknownRegionType
+        for unknown_region in unknown_regions:
+            coordinates = self.handle_points_type(unknown_region.Coords.points)
+            document.add_region(area=coordinates, region_type="unknown")
+
+            self._warn_region_parent_elements(unknown_region)
         return document
