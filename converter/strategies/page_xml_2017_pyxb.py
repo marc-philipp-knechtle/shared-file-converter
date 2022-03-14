@@ -340,7 +340,6 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
 
     @execute_if_present
     def handle_image_region(self, document: Document, image_regions: _PluralBinding) -> Document:
-
         image_region: ImageRegionType
         for image_region in image_regions:
             coordinates = self.handle_points_type(image_region.Coords.points)
@@ -356,8 +355,19 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return document
 
     @execute_if_present
-    def handle_line_drawing_region(self, document: Document, line_drawing_region: LineDrawingRegionType) -> Document:
-        self._warn_if_present(line_drawing_region, "line_drawing_region")
+    def handle_line_drawing_region(self, document: Document, line_drawing_regions: _PluralBinding) -> Document:
+        line_drawing_region: LineDrawingRegionType
+        for line_drawing_region in line_drawing_regions:
+            coordinates = self.handle_points_type(line_drawing_region.Coords.points)
+            document.add_region(area=coordinates, region_type="line_drawing")
+
+            self._warn_if_present(line_drawing_region.orientation, "orientation")
+            self._warn_if_present(line_drawing_region.penColour, "penColour")
+            self._warn_if_present(line_drawing_region.bgColour, "bgColour")
+            self._warn_if_present(line_drawing_region.embText, "embText")
+
+            self._warn_region_parent_elements(line_drawing_region)
+
         return document
 
     @execute_if_present
