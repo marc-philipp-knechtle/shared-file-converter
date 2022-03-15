@@ -101,42 +101,6 @@ class PageConversionStrategy(ConversionStrategy, ABC):
         pass
 
 
-class PageXML2017StrategyGenerateDS(ConversionStrategy):
-    """
-    The GenerateDS handling seems to be very similar to the PyXB handling, if not identical.
-    I will therefore continue implementing the desired functionality with PyXB, not because of any knowledge of the
-    inner workings, but only because of preference.
-    But I'll leave this approach in this repository for an eventual later evaluation.
-
-    def test_generate_ds_conversion(input_filepath):
-    xml: str = reader.read_xml(input_filepath)
-    doc: ConverterDocument = ConverterDocument(input_filepath, xml,
-                                               tmp_type=generate_ds_2017.parse(input_filepath, silence=True))
-    logger.info("Started processing on file: [" + input_filepath + "]")
-    context = ConversionContext(PageXML2017StrategyGenerateDS(), doc)
-    document: Document = context.convert()
-
-    """
-
-    def initialize(self, original: ConverterDocument):
-        print("hello there from initialyze")
-        generate_ds_object = original.tmp_type
-        print(generate_ds_object.Metadata.Creator)
-        pass
-
-    def add_metadata(self, original: ConverterDocument) -> ConverterDocument:
-        pass
-
-    def add_regions(self, original: ConverterDocument) -> ConverterDocument:
-        pass
-
-    def add_baselines(self, converter_doc: ConverterDocument) -> ConverterDocument:
-        pass
-
-    def add_lines(self, converter_doc: ConverterDocument) -> ConverterDocument:
-        pass
-
-
 class PageXML2019Strategy(ConversionStrategy):
 
     def initialize(self, original: ConverterDocument) -> ConverterDocument:
