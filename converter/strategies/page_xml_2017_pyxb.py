@@ -109,6 +109,11 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         document.add_creator(pyxb_object.Metadata.Creator, "2017-07-15")
         document.add_creator("shared-file-converter", str(date.today()))
         original.shared_file_format_document = document
+
+        # todo add Page root types e.g. pyxb_object.Page.<xyz> (maybe this is more appropriate in add_metadate)
+        # missing: custom, type, primaryLanguage, secondaryLanguage, primaryScript, secondaryScript, readingOrder
+        #          textLineOrder
+
         return original
 
     def add_metadata(self, original: ConverterDocument) -> ConverterDocument:
