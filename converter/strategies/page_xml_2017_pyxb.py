@@ -102,6 +102,22 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
             points_shared_file_format.append(point)
         return points_shared_file_format
 
+    def _add_region_content(self, document, page, pyxb_object):
+        document = self.handle_text_regions(document, pyxb_object.Page.TextRegion)
+        document = self.handle_image_region(document, page.ImageRegion)
+        document = self.handle_line_drawing_region(document, page.LineDrawingRegion)
+        document = self.handle_graphic_region(document, page.GraphicRegion)
+        document = self.handle_table_region(document, page.TableRegion)
+        document = self.handle_chart_region(document, page.ChartRegion)
+        document = self.handle_separator_region(document, page.SeparatorRegion)
+        document = self.handle_maths_region(document, page.MathsRegion)
+        document = self.handle_chem_region(document, page.ChemRegion)
+        document = self.handle_music_region(document, page.MusicRegion)
+        document = self.handle_advert_region(document, page.AdvertRegion)
+        document = self.handle_noise_region(document, page.NoiseRegion)
+        document = self.handle_unknown_region(document, page.UnknownRegion)
+        return document
+
     def initialize(self, original: ConverterDocument) -> ConverterDocument:
         pyxb_object: PcGtsType = original.tmp_type
         document: Document = Document.empty(pyxb_object.Page.imageFilename,
@@ -136,19 +152,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         page: PageType = pyxb_object.Page
         document: Document = original.shared_file_format_document
 
-        document = self.handle_text_regions(document, pyxb_object.Page.TextRegion)
-        document = self.handle_image_region(document, page.ImageRegion)
-        document = self.handle_line_drawing_region(document, page.LineDrawingRegion)
-        document = self.handle_graphic_region(document, page.GraphicRegion)
-        document = self.handle_table_region(document, page.TableRegion)
-        document = self.handle_chart_region(document, page.ChartRegion)
-        document = self.handle_separator_region(document, page.SeparatorRegion)
-        document = self.handle_maths_region(document, page.MathsRegion)
-        document = self.handle_chem_region(document, page.ChemRegion)
-        document = self.handle_music_region(document, page.MusicRegion)
-        document = self.handle_advert_region(document, page.AdvertRegion)
-        document = self.handle_noise_region(document, page.NoiseRegion)
-        document = self.handle_unknown_region(document, page.UnknownRegion)
+        document = self._add_region_content(document, page, pyxb_object)
 
         original.shared_file_format_document = document
         return original
