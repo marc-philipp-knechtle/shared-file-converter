@@ -112,12 +112,6 @@ class PageXML2019Strategy(ConversionStrategy):
     def add_regions(self, original: ConverterDocument) -> ConverterDocument:
         pass
 
-    def add_baselines(self, converter_doc: ConverterDocument) -> ConverterDocument:
-        pass
-
-    def add_lines(self, converter_doc: ConverterDocument) -> ConverterDocument:
-        pass
-
 
 class ConversionContext:
     _strategy: ConversionStrategy
