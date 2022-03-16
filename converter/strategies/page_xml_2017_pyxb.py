@@ -153,6 +153,24 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         original.shared_file_format_document = document
         return original
 
+    def handle_alternative_image(self, document: Document, alternative_image) -> Document:
+        pass
+
+    def handle_border(self, document: Document, border) -> Document:
+        pass
+
+    def handle_print_space(self, document: Document, print_space) -> Document:
+        pass
+
+    def handle_reading_order(self, document: Document, reading_order) -> Document:
+        pass
+
+    def handle_layers(self, document: Document, layers) -> Document:
+        pass
+
+    def handle_user_defined(self, document: Document, user_defined) -> Document:
+        pass
+
     """
     Text Region Handling
     """
