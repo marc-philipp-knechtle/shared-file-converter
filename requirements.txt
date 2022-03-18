@@ -3,6 +3,7 @@ pymongo
 loguru
 lxml
 pyxb
+pytest
 
 -e shared-file-format/python
 -e .
