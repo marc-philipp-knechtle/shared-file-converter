@@ -13,7 +13,7 @@ from converter.strategies.generated.page_xml.py_xb_2017 import PcGtsType, UserDe
     PointsType, TextLineType, BaselineType, TextEquivType, TextStyleType, PageType, LineDrawingRegionType, \
     GraphicRegionType, TableRegionType, ChartRegionType, SeparatorRegionType, MathsRegionType, \
     ChemRegionType, MusicRegionType, AdvertRegionType, NoiseRegionType, UnknownRegionType, RegionType, ImageRegionType
-from docrecjson.elements import Document, PolygonRegion, GroupRef
+from docrecjson.elements import Document, PolygonRegion, GroupRef, DocumentElement
 
 
 def execute_if_present(func):
@@ -37,6 +37,31 @@ def execute_if_present(func):
             return func(*args, **kwargs)
         else:
             return args[1]
+
+    return wrapper
+
+
+def recursive(func):
+    """
+    the add_xyz methods annotated with this will call their children or themselves recursively until there are no more
+    children elements.
+    """
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        document: Document = func(*args, **kwargs)
+        parent: DocumentElement = document.content[-1]
+        # add a group to the parent object if the group is not already present
+        if parent.group is None:
+            document.add_group(parent)
+
+        document.use_group_of(parent)
+
+        plural_binding_parent = args[2]
+        for element in plural_binding_parent:
+            document = PageXML2017StrategyPyXB.add_region_content(PageXML2017StrategyPyXB(), document, element)
+        document.use_new_group()
+
+        return document
 
     return wrapper
 
@@ -102,20 +127,20 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
             points_shared_file_format.append(point)
         return points_shared_file_format
 
-    def _add_region_content(self, document, page, pyxb_object):
-        document = self.handle_text_regions(document, pyxb_object.Page.TextRegion)
-        document = self.handle_image_region(document, page.ImageRegion)
-        document = self.handle_line_drawing_region(document, page.LineDrawingRegion)
-        document = self.handle_graphic_region(document, page.GraphicRegion)
-        document = self.handle_table_region(document, page.TableRegion)
-        document = self.handle_chart_region(document, page.ChartRegion)
-        document = self.handle_separator_region(document, page.SeparatorRegion)
-        document = self.handle_maths_region(document, page.MathsRegion)
-        document = self.handle_chem_region(document, page.ChemRegion)
-        document = self.handle_music_region(document, page.MusicRegion)
-        document = self.handle_advert_region(document, page.AdvertRegion)
-        document = self.handle_noise_region(document, page.NoiseRegion)
-        document = self.handle_unknown_region(document, page.UnknownRegion)
+    def add_region_content(self, document, parent) -> Document:
+        document = self.handle_text_regions(document, parent.TextRegion)
+        document = self.handle_image_region(document, parent.ImageRegion)
+        document = self.handle_line_drawing_region(document, parent.LineDrawingRegion)
+        document = self.handle_graphic_region(document, parent.GraphicRegion)
+        document = self.handle_table_region(document, parent.TableRegion)
+        document = self.handle_chart_region(document, parent.ChartRegion)
+        document = self.handle_separator_region(document, parent.SeparatorRegion)
+        document = self.handle_maths_region(document, parent.MathsRegion)
+        document = self.handle_chem_region(document, parent.ChemRegion)
+        document = self.handle_music_region(document, parent.MusicRegion)
+        document = self.handle_advert_region(document, parent.AdvertRegion)
+        document = self.handle_noise_region(document, parent.NoiseRegion)
+        document = self.handle_unknown_region(document, parent.UnknownRegion)
         return document
 
     def initialize(self, original: ConverterDocument) -> ConverterDocument:
@@ -152,7 +177,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         page: PageType = pyxb_object.Page
         document: Document = original.shared_file_format_document
 
-        document = self._add_region_content(document, page, pyxb_object)
+        document = self.add_region_content(document, page)
 
         original.shared_file_format_document = document
         return original
@@ -180,6 +205,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
     """
 
     @execute_if_present
+    @recursive
     def handle_text_regions(self, document: Document, text_regions) -> Document:
         text_region: TextRegionType
         for text_region in text_regions:
@@ -256,6 +282,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return True if length_of_all_types != 0 else False
 
     @execute_if_present
+    @recursive
     def handle_text_lines(self, document: Document, text_lines: _PluralBinding,
                           group_ref: Optional[GroupRef] = None) -> Document:
         text_line: TextLineType
@@ -285,6 +312,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return document
 
     @execute_if_present
+    @recursive
     def handle_text_equiv(self, document: Document, text_equivs: _PluralBinding,
                           group_ref: Optional[GroupRef] = None) -> Document:
         text_equiv: TextEquivType
@@ -301,6 +329,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return document
 
     @execute_if_present
+    @recursive
     def handle_text_style(self, document: Document, text_style: TextStyleType) -> Document:
         self._warn_if_present(text_style.fontFamily, "fontFamily")
         self._warn_if_present(text_style.serif, "serif")
@@ -332,6 +361,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return self._handle_points_type(coords.points)
 
     @execute_if_present
+    @recursive
     def handle_baseline_type(self, default_return, baseline: BaselineType):
         return self._handle_points_type(baseline.points)
 
@@ -366,6 +396,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         self._warn_if_present(region_child_element.UnknownRegion, "UnknownRegion")
 
     @execute_if_present
+    @recursive
     def handle_image_region(self, document: Document, image_regions: _PluralBinding) -> Document:
         image_region: ImageRegionType
         for image_region in image_regions:
@@ -382,6 +413,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return document
 
     @execute_if_present
+    @recursive
     def handle_line_drawing_region(self, document: Document, line_drawing_regions: _PluralBinding) -> Document:
         line_drawing_region: LineDrawingRegionType
         for line_drawing_region in line_drawing_regions:
@@ -398,6 +430,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return document
 
     @execute_if_present
+    @recursive
     def handle_graphic_region(self, document: Document, graphic_regions: _PluralBinding) -> Document:
         graphic_region: GraphicRegionType
         for graphic_region in graphic_regions:
@@ -414,6 +447,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return document
 
     @execute_if_present
+    @recursive
     def handle_table_region(self, document: Document, table_regions: _PluralBinding) -> Document:
         table_region: TableRegionType
         for table_region in table_regions:
@@ -432,6 +466,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return document
 
     @execute_if_present
+    @recursive
     def handle_chart_region(self, document: Document, chart_regions: _PluralBinding) -> Document:
         chart_region: ChartRegionType
         for chart_region in chart_regions:
@@ -449,6 +484,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return document
 
     @execute_if_present
+    @recursive
     def handle_separator_region(self, document: Document, separator_regions: _PluralBinding) -> Document:
         separator_region: SeparatorRegionType
         for separator_region in separator_regions:
@@ -462,6 +498,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return document
 
     @execute_if_present
+    @recursive
     def handle_maths_region(self, document: Document, maths_regions: _PluralBinding) -> Document:
         maths_region: MathsRegionType
         for maths_region in maths_regions:
@@ -475,6 +512,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return document
 
     @execute_if_present
+    @recursive
     def handle_chem_region(self, document: Document, chem_regions: _PluralBinding) -> Document:
         chem_region: ChemRegionType
         for chem_region in chem_regions:
@@ -488,6 +526,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return document
 
     @execute_if_present
+    @recursive
     def handle_music_region(self, document: Document, music_regions: _PluralBinding) -> Document:
         music_region: MusicRegionType
         for music_region in music_regions:
@@ -501,6 +540,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return document
 
     @execute_if_present
+    @recursive
     def handle_advert_region(self, document: Document, advert_regions: _PluralBinding) -> Document:
         advert_region: AdvertRegionType
         for advert_region in advert_regions:
@@ -514,6 +554,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return document
 
     @execute_if_present
+    @recursive
     def handle_noise_region(self, document: Document, noise_regions: _PluralBinding) -> Document:
         noise_region: NoiseRegionType
         for noise_region in noise_regions:
@@ -524,6 +565,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return document
 
     @execute_if_present
+    @recursive
     def handle_unknown_region(self, document: Document, unknown_regions: _PluralBinding) -> Document:
         unknown_region: UnknownRegionType
         for unknown_region in unknown_regions:
