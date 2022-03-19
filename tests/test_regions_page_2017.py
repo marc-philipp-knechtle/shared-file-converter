@@ -52,4 +52,5 @@ class TestTextRegion(TestCase):
                                   "/text-region/text-region-with-text-line.json")
 
     def test_text_region_with_text_style(self):
-        pass
+        run_end_to_end_conversion("/text-region/text-region-with-text-style.xml",
+                                  "/text-region/text-region-with-text-style.json")
