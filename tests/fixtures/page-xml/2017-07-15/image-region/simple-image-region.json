@@ -37,6 +37,16 @@
           456
         ]
       ]
+    },
+    {
+      "oid": 5,
+      "data": {
+        "orientation": 1.0,
+        "colourDepth": "bilevel",
+        "bgColour": "other"
+      },
+      "group": 1,
+      "otype": "meta"
     }
   ],
   "creators": [

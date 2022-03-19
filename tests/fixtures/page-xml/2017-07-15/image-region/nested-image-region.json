@@ -39,8 +39,18 @@
       ]
     },
     {
-      "otype": "region",
       "oid": 5,
+      "data": {
+        "orientation": 1.0,
+        "colourDepth": "bilevel",
+        "bgColour": "other"
+      },
+      "group": 1,
+      "otype": "meta"
+    },
+    {
+      "otype": "region",
+      "oid": 6,
       "group": 1,
       "region_type": "image",
       "polygon": [

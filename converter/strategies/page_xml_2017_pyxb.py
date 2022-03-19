@@ -46,6 +46,7 @@ def recursive(func):
     the add_xyz methods annotated with this will call their children or themselves recursively until there are no more
     children elements.
     """
+
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         document: Document = func(*args, **kwargs)
@@ -92,13 +93,32 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
             The dependency to RegionType is necessary to include basic properties e.g. Coordinates.
     """
 
-    # This is not inspected because moving this out of the strategy may be very confusing
+    # The next methods are not static-inspected inspected because moving this out of the strategy may be very confusing
     # Furthermore this may be necessary to implement for each strategy and be moved therefore into ConversionStrategy
     #   or a page subclass.
     # noinspection PyMethodMayBeStatic
-    def _execute_if_present(self, py_xb_object_condition, func, *args):
-        if py_xb_object_condition:
+    def _execute_if_present(self, condition, func, *args):
+        if self._is_present(condition):
             func(*args)
+
+    # noinspection PyMethodMayBeStatic
+    def _is_present(self, condition) -> bool:
+        if type(condition) == dict:
+            if len(condition) > 0:
+                return True
+            else:
+                return False
+        # At this point, it's assumed that the condition object is one of the PyXb objects.
+        if condition:
+            return True
+        return False
+
+    def _create_dict_if_present(self, **kwargs) -> dict:
+        dct: dict = {}
+        for name, value in kwargs.items():
+            if self._is_present(value):
+                dct[name] = value
+        return dct
 
     # noinspection PyMethodMayBeStatic
     def _warn_if_present(self, obj, property_name: str):
@@ -209,6 +229,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
     def handle_text_regions(self, document: Document, text_regions) -> Document:
         text_region: TextRegionType
         for text_region in text_regions:
+            region: GroupRef
             if self._has_complex_subtype(text_region):
                 # this text regions has subtypes
                 # -> it only serves the purpose of beeing a group id for it's subtypes
@@ -218,7 +239,23 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
                 # -> it's added to document engine as text content
                 document = self._handle_simple_text_region_type(document, text_region)
 
-            self._warn_simple_text_region_root(text_region)
+            metadata: dict = self._create_dict_if_present(align=text_region.align,
+                                                          comments=text_region.comments,
+                                                          continuation=text_region.continuation,
+                                                          custom=text_region.custom,
+                                                          indented=text_region.indented,
+                                                          leading=text_region.leading,
+                                                          orientation=text_region.orientation,
+                                                          primaryLanguage=text_region.primaryLanguage,
+                                                          primaryScript=text_region.primaryScript,
+                                                          production=text_region.production,
+                                                          readingDirection=text_region.readingDirection,
+                                                          readingOrientation=text_region.readingOrientation,
+                                                          secondaryLanguage=text_region.secondaryLanguage,
+                                                          textLineOrder=text_region.textLineOrder)
+            if document.content[-1].group is None:
+                document.add_group(document.content[-1])
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, document.content[-1].group)
 
         return document
 
@@ -241,22 +278,6 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         document = self.handle_text_style(document, text_region.TextStyle)
 
         return document
-
-    def _warn_simple_text_region_root(self, text_region: TextRegionType):
-        self._warn_if_present(text_region.align, "align")
-        self._warn_if_present(text_region.comments, "comments")
-        self._warn_if_present(text_region.continuation, "continuation")
-        self._warn_if_present(text_region.custom, "custom")
-        self._warn_if_present(text_region.indented, "indented")
-        self._warn_if_present(text_region.leading, "leading")
-        self._warn_if_present(text_region.orientation, "orientation")
-        self._warn_if_present(text_region.primaryLanguage, "primaryLanguage")
-        self._warn_if_present(text_region.primaryScript, "primaryScript")
-        self._warn_if_present(text_region.production, "production")
-        self._warn_if_present(text_region.readingDirection, "readingDirection")
-        self._warn_if_present(text_region.readingOrientation, "readingOrientation")
-        self._warn_if_present(text_region.secondaryLanguage, "secondaryLanguage")
-        self._warn_if_present(text_region.textLineOrder, "textLineOrder")
 
     # noinspection PyMethodMayBeStatic
     def _len_plural_binding(self, _plural_binding_object: _PluralBinding) -> int:
@@ -290,20 +311,22 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
             points = self.handle_coords_type(text_line.Coords)
             baseline_points = self.handle_baseline_type([], text_line.Baseline)
 
+            docobject: DocumentElement = document.content[-1]
             if len(points) != 0:
-                document.add_line_polygon(points, group_ref)
+                docobject = document.add_line_polygon(points, group_ref)
             if len(baseline_points) != 0:
-                document.add_baseline(points, group_ref)
+                docobject = document.add_baseline(points, group_ref)
 
-            self._warn_if_present(text_line.id, "id")
-            self._warn_if_present(text_line.primaryLanguage, "primaryLanguage")
-            self._warn_if_present(text_line.primaryScript, "primaryScript")
-            self._warn_if_present(text_line.secondaryScript, "secondaryScript")
-            self._warn_if_present(text_line.readingDirection, "readingdirection")
-            self._warn_if_present(text_line.production, "production")
-            self._warn_if_present(text_line.custom, "custom")
-            self._warn_if_present(text_line.comments, "comments")
+            metadata: dict = self._create_dict_if_present(primaryLanguage=text_line.primaryLanguage,
+                                                          primaryScript=text_line.primaryScript,
+                                                          secondaryScript=text_line.secondaryScript,
+                                                          readingDirection=text_line.readingDirection,
+                                                          production=text_line.production,
+                                                          custom=text_line.custom,
+                                                          comments=text_line.comments)
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, docobject)
 
+            # todo resolve these complex types
             self._warn_if_present(text_line.Word, "word")
             self._warn_if_present(text_line.TextEquiv, "textEquiv")
             self._warn_if_present(text_line.TextStyle, "textStyle")
@@ -318,38 +341,41 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         text_equiv: TextEquivType
         for text_equiv in text_equivs:
             unicode: str = text_equiv.Unicode
-            document.add_text(unicode, group_ref)
+            region = document.add_text(unicode, group_ref)
 
-            self._warn_if_present(text_equiv.index, "index")
-            self._warn_if_present(text_equiv.conf, "confidence")
-            self._warn_if_present(text_equiv.dataType, "dataType")
-            self._warn_if_present(text_equiv.dataTypeDetails, "dataTypeDetails")
-            self._warn_if_present(text_equiv.comments, "comments")
+            metadata: dict = self._create_dict_if_present(index=text_equiv.index,
+                                                          confidence=text_equiv.conf,
+                                                          dataType=text_equiv.dataType,
+                                                          dataTypeDetails=text_equiv.dataTypeDetails,
+                                                          comments=text_equiv.comments)
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, region)
 
         return document
 
     @execute_if_present
     @recursive
     def handle_text_style(self, document: Document, text_style: TextStyleType) -> Document:
-        self._warn_if_present(text_style.fontFamily, "fontFamily")
-        self._warn_if_present(text_style.serif, "serif")
-        self._warn_if_present(text_style.monospace, "monospace")
-        self._warn_if_present(text_style.fontSize, "fontSize")
-        self._warn_if_present(text_style.xHeight, "xHeight")
-        self._warn_if_present(text_style.kerning, "kerning")
-        self._warn_if_present(text_style.textColour, "textColour")
-        self._warn_if_present(text_style.textColourRgb, "textColourRgb")
-        self._warn_if_present(text_style.bgColour, "bgColour")
-        self._warn_if_present(text_style.bgColourRgb, "bgColourRgb")
-        self._warn_if_present(text_style.reverseVideo, "reverseVideo")
-        self._warn_if_present(text_style.bold, "bold")
-        self._warn_if_present(text_style.italic, "italic")
-        self._warn_if_present(text_style.underlined, "underlined")
-        self._warn_if_present(text_style.subscript, "subscript")
-        self._warn_if_present(text_style.superscript, "superscript")
-        self._warn_if_present(text_style.strikethrough, "strikethrough")
-        self._warn_if_present(text_style.smallCaps, "smallCaps")
-        self._warn_if_present(text_style.letterSpaced, "letterSpaced")
+        region_ref = document.content[-1]
+        metadata: dict = self._create_dict_if_present(fontFamily=text_style.fontFamily,
+                                                      serif=text_style.serif,
+                                                      monospace=text_style.monospace,
+                                                      fontSize=text_style.fontSize,
+                                                      xHeight=text_style.xHeight,
+                                                      kerning=text_style.kerning,
+                                                      textColour=text_style.textColour,
+                                                      textColourRgb=text_style.textColourRgb,
+                                                      bgColour=text_style.bgColour,
+                                                      bgColourRgb=text_style.bgColourRgb,
+                                                      reverseVideo=text_style.reverseVideo,
+                                                      bold=text_style.bold,
+                                                      italic=text_style.italic,
+                                                      underlined=text_style.underlined,
+                                                      subscript=text_style.subscript,
+                                                      superscript=text_style.superscript,
+                                                      strikethrough=text_style.strikethrough,
+                                                      smallCaps=text_style.smallCaps,
+                                                      letterSpaced=text_style.letterSpaced)
+        self._execute_if_present(metadata, document.add_content_metadata, metadata, region_ref)
         return document
 
     def handle_coords_type(self, coords: CoordsType) -> Sequence[Tuple[int, int]]:
@@ -401,13 +427,15 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         image_region: ImageRegionType
         for image_region in image_regions:
             coordinates = self._handle_points_type(image_region.Coords.points)
-            document.add_region(area=coordinates, region_type="image")
+            region = document.add_region(area=coordinates, region_type="image")
 
-            self._warn_if_present(image_region.orientation, "orientation")
-            self._warn_if_present(image_region.colourDepth, "colourDepth")
-            self._warn_if_present(image_region.bgColour, "bgColour")
-            self._warn_if_present(image_region.embText, "embText")
+            metadata: dict = self._create_dict_if_present(orientation=image_region.orientation,
+                                                          colourDepth=image_region.colourDepth,
+                                                          bgColour=image_region.bgColour,
+                                                          embText=image_region.embText)
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, region)
 
+            # todo what elements need to be added to the recursive functionality to remove this behaviour
             self._warn_region_parent_elements(image_region)
 
         return document
@@ -418,12 +446,13 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         line_drawing_region: LineDrawingRegionType
         for line_drawing_region in line_drawing_regions:
             coordinates = self._handle_points_type(line_drawing_region.Coords.points)
-            document.add_region(area=coordinates, region_type="line_drawing")
+            region = document.add_region(area=coordinates, region_type="line_drawing")
 
-            self._warn_if_present(line_drawing_region.orientation, "orientation")
-            self._warn_if_present(line_drawing_region.penColour, "penColour")
-            self._warn_if_present(line_drawing_region.bgColour, "bgColour")
-            self._warn_if_present(line_drawing_region.embText, "embText")
+            metadata: dict = self._create_dict_if_present(orientation=line_drawing_region.orientation,
+                                                          penColour=line_drawing_region.penColour,
+                                                          bgColour=line_drawing_region.bgColour,
+                                                          embText=line_drawing_region.embText)
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, region)
 
             self._warn_region_parent_elements(line_drawing_region)
 
@@ -435,12 +464,13 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         graphic_region: GraphicRegionType
         for graphic_region in graphic_regions:
             coordinates = self._handle_points_type(graphic_region.Coords.points)
-            document.add_region(area=coordinates, region_type="graphic")
+            region = document.add_region(area=coordinates, region_type="graphic")
 
-            self._warn_if_present(graphic_region.orientation, "orientation")
-            self._warn_if_present(graphic_region.type, "type")
-            self._warn_if_present(graphic_region.numColours, "numColours")
-            self._warn_if_present(graphic_region.embText, "embText")
+            metadata: dict = self._create_dict_if_present(orientation=graphic_region.orientation,
+                                                          type=graphic_region.type,
+                                                          numColours=graphic_region.numColours,
+                                                          embText=graphic_region.embText)
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, region)
 
             self._warn_region_parent_elements(graphic_region)
 
@@ -452,15 +482,16 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         table_region: TableRegionType
         for table_region in table_regions:
             coordinates = self._handle_points_type(table_region.Coords.points)
-            document.add_region(area=coordinates, region_type="table")
+            region = document.add_region(area=coordinates, region_type="table")
 
-            self._warn_if_present(table_region.orientation, "orientation")
-            self._warn_if_present(table_region.rows, "rows")
-            self._warn_if_present(table_region.columns, "columns")
-            self._warn_if_present(table_region.lineColour, "colour")
-            self._warn_if_present(table_region.bgColour, "bgColour")
-            self._warn_if_present(table_region.lineSeparators, "lineSeparators")
-            self._warn_if_present(table_region.embText, "embText")
+            metadata: dict = self._create_dict_if_present(orientation=table_region.orientation,
+                                                          rows=table_region.rows,
+                                                          columns=table_region.columns,
+                                                          lineColour=table_region.lineColour,
+                                                          bgColour=table_region.bgColour,
+                                                          lineSeparators=table_region.lineSeparators,
+                                                          embText=table_region.embText)
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, region)
 
             self._warn_region_parent_elements(table_region)
         return document
@@ -471,13 +502,14 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         chart_region: ChartRegionType
         for chart_region in chart_regions:
             coordinates = self._handle_points_type(chart_region.Coords.points)
-            document.add_region(area=coordinates, region_type="chart")
+            region = document.add_region(area=coordinates, region_type="chart")
 
-            self._warn_if_present(chart_region.orientation, "orientation")
-            self._warn_if_present(chart_region.type, "type")
-            self._warn_if_present(chart_region.numColours, "numColours")
-            self._warn_if_present(chart_region.bgColour, "bgColour")
-            self._warn_if_present(chart_region.embText, "embText")
+            metadata: dict = self._create_dict_if_present(orientation=chart_region.orientation,
+                                                          type=chart_region.type,
+                                                          numColours=chart_region.numColours,
+                                                          bgColour=chart_region.bgColour,
+                                                          embText=chart_region.embText)
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, region)
 
             self._warn_region_parent_elements(chart_region)
 
@@ -489,10 +521,11 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         separator_region: SeparatorRegionType
         for separator_region in separator_regions:
             coordinates = self._handle_points_type(separator_region.Coords.points)
-            document.add_region(area=coordinates, region_type="separator")
+            region = document.add_region(area=coordinates, region_type="separator")
 
-            self._warn_if_present(separator_region.orientation, "orientation")
-            self._warn_if_present(separator_region.colour, "colour")
+            metadata: dict = self._create_dict_if_present(orientation=separator_region.orientation,
+                                                          colour=separator_region.colour)
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, region)
 
             self._warn_region_parent_elements(separator_region)
         return document
@@ -503,10 +536,11 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         maths_region: MathsRegionType
         for maths_region in maths_regions:
             coordinates = self._handle_points_type(maths_region.Coords.points)
-            document.add_region(area=coordinates, region_type="maths")
+            region = document.add_region(area=coordinates, region_type="maths")
 
-            self._warn_if_present(maths_region.orientation, "orientation")
-            self._warn_if_present(maths_region.bgColour, "bgColour")
+            metadata: dict = self._create_dict_if_present(orientation=maths_region.orientation,
+                                                          bgColour=maths_region.bgColour)
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, region)
 
             self._warn_region_parent_elements(maths_region)
         return document
@@ -517,10 +551,11 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         chem_region: ChemRegionType
         for chem_region in chem_regions:
             coordinates = self._handle_points_type(chem_region.Coords.points)
-            document.add_region(area=coordinates, region_type="chem")
+            region = document.add_region(area=coordinates, region_type="chem")
 
-            self._warn_if_present(chem_region.orientation, "orientation")
-            self._warn_if_present(chem_region.bgColour, "bgColour")
+            metadata: dict = self._create_dict_if_present(orientation=chem_region.orientation,
+                                                          bgColour=chem_region.bgColour)
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, region)
 
             self._warn_region_parent_elements(chem_region)
         return document
@@ -531,10 +566,11 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         music_region: MusicRegionType
         for music_region in music_regions:
             coordinates = self._handle_points_type(music_region.Coords.points)
-            document.add_region(area=coordinates, region_type="music")
+            region = document.add_region(area=coordinates, region_type="music")
 
-            self._warn_if_present(music_region.orientation, "orientation")
-            self._warn_if_present(music_region.bgColour, "bgColour")
+            metadata: dict = self._create_dict_if_present(orientation=music_region.orientation,
+                                                          bgColour=music_region.bgColour)
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, region)
 
             self._warn_region_parent_elements(music_region)
         return document
@@ -545,10 +581,11 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         advert_region: AdvertRegionType
         for advert_region in advert_regions:
             coordinates = self._handle_points_type(advert_region.Coords.points)
-            document.add_region(area=coordinates, region_type="advert")
+            region = document.add_region(area=coordinates, region_type="advert")
 
-            self._warn_if_present(advert_region.orientation, "orientation")
-            self._warn_if_present(advert_region.bgColour, "bgColour")
+            metadata: dict = self._create_dict_if_present(orientation=advert_region.orientation,
+                                                          bgColour=advert_region.bgColour)
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, region)
 
             self._warn_region_parent_elements(advert_region)
         return document
