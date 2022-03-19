@@ -243,6 +243,10 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
             # todo: call: handle_glyph, handle_text_equiv, handle_text_style, handle_user_defined
         return document
 
+    def handle_glyph_type(self):
+        # todo: call: handle_coords, handle_graphemes, handle_text_equiv, handle_text_style, handle_user_defined
+        pass
+
     """
     Text Region Handling
     """
