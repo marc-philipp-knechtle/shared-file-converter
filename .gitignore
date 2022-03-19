@@ -3,3 +3,5 @@ converter.egg-info
 errors.log
 __pycache__
 shared-file-format
+docrecjson.egg-info
+
