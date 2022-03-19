@@ -34,3 +34,6 @@ class TestImageRegion(TestCase):
 
     def test_simple_image_region(self):
         run_end_to_end_conversion("/image-region/simple-image-region.xml", "/image-region/simple-image-region.json")
+
+    def test_nested_image_region(self):
+        run_end_to_end_conversion("/image-region/nested-image-region.xml", "/image-region/nested-image-region.json")
