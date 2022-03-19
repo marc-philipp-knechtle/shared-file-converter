@@ -47,27 +47,16 @@
             <pc:UserAttribute description="some-user-defined-description" name="some-user-defined-name"
                               type="xsd:string" value="some-user-defined-value"/>
         </pc:UserDefined>
-        <pc:TextRegion align="left" comments="some textRegionComments" continuation="true" custom="" id="idvalue3"
+        <pc:TextRegion align="left" comments="some textRegionComments" continuation="true" custom="custom" id="idvalue3"
                        indented="true" leading="0"
                        orientation="0.0" primaryLanguage="Abkhaz" primaryScript="Adlm - Adlam" production="printed"
                        readingDirection="left-to-right" readingOrientation="0.0" secondaryLanguage="Abkhaz"
                        secondaryScript="Adlm - Adlam" textLineOrder="top-to-bottom" type="paragraph">
             <pc:Coords points="123,456 123,456"/>
             <pc:UserDefined>
-                <pc:UserAttribute description="" name="text-region-user-defined" type="xsd:string"
+                <pc:UserAttribute description="userdefined" name="text-region-user-defined" type="xsd:string"
                                   value="text-region-user-defined"/>
             </pc:UserDefined>
-            <pc:Roles>
-                <pc:TableCellRole colSpan="0" columnIndex="0" rowIndex="0" rowSpan="0"/>
-            </pc:Roles>
-            <pc:TextEquiv comments="" conf="0.0" dataType="xsd:decimal" dataTypeDetails="" index="0">
-                <pc:PlainText>pc:PlainText</pc:PlainText>
-                <pc:Unicode>pc:Unicode</pc:Unicode>
-            </pc:TextEquiv>
-            <pc:TextStyle bgColour="black" bgColourRgb="0" bold="true" fontFamily="" fontSize="0.0" italic="true"
-                          kerning="0" letterSpaced="true" monospace="true" reverseVideo="true" serif="true"
-                          smallCaps="true" strikethrough="true" subscript="true" superscript="true" textColour="black"
-                          textColourRgb="0" underlined="true" xHeight="0"/>
         </pc:TextRegion>
     </pc:Page>
 </pc:PcGts>

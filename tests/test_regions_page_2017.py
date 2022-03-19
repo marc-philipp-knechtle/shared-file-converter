@@ -37,3 +37,18 @@ class TestImageRegion(TestCase):
 
     def test_nested_image_region(self):
         run_end_to_end_conversion("/image-region/nested-image-region.xml", "/image-region/nested-image-region.json")
+
+
+class TestTextRegion(TestCase):
+    def test_simple_text_region(self):
+        run_end_to_end_conversion("/text-region/simple-text-region.xml", "/text-region/simple-text-region.json")
+
+    def test_text_region_with_text_equiv(self):
+        run_end_to_end_conversion("/text-region/text-region-with-text-equiv.xml",
+                                  "/text-region/text-region-with-text-equiv.json")
+
+    def test_text_region_with_text_line(self):
+        pass
+
+    def test_text_region_with_text_style(self):
+        pass

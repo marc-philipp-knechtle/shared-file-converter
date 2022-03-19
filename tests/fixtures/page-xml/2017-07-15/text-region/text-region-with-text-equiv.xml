@@ -13,27 +13,19 @@
                               value="user-defined-value"/>
         </pc:UserDefined>
     </pc:Metadata>
-    <pc:Page custom="" imageFilename="" imageHeight="0" imageWidth="0" primaryLanguage="Abkhaz"
-             primaryScript="Adlm - Adlam" readingDirection="left-to-right" secondaryLanguage="Abkhaz"
-             secondaryScript="Adlm - Adlam" textLineOrder="top-to-bottom" type="front-cover">
-        <pc:TextRegion align="left" comments="some textRegionComments" continuation="true" custom="" id="idvalue3"
-                       indented="true" leading="0"
-                       orientation="0.0" primaryLanguage="Abkhaz" primaryScript="Adlm - Adlam" production="printed"
-                       readingDirection="left-to-right" readingOrientation="0.0" secondaryLanguage="Abkhaz"
-                       secondaryScript="Adlm - Adlam" textLineOrder="top-to-bottom" type="paragraph">
+    <pc:Page imageFilename="imageFilename" imageHeight="123" imageWidth="456">
+        <pc:TextRegion id="idvalue3">
             <pc:Coords points="123,456 123,456"/>
-            <pc:TextEquiv comments="" conf="0.0" dataType="xsd:decimal" dataTypeDetails="dataTypeDetails" index="0">
+            <pc:TextEquiv comments="comments" conf="0.0" dataType="xsd:decimal" dataTypeDetails="dataTypeDetails"
+                          index="0">
                 <pc:PlainText>pc:PlainText</pc:PlainText>
                 <pc:Unicode>pc:Unicode</pc:Unicode>
             </pc:TextEquiv>
-            <pc:TextEquiv comments="" conf="0.0" dataType="xsd:decimal" dataTypeDetails="dataTypeDetails" index="1">
+            <pc:TextEquiv comments="comments" conf="0.0" dataType="xsd:decimal" dataTypeDetails="dataTypeDetails"
+                          index="1">
                 <pc:PlainText>pc:PlainText</pc:PlainText>
                 <pc:Unicode>pc:Unicode</pc:Unicode>
             </pc:TextEquiv>
-            <pc:TextStyle bgColour="black" bgColourRgb="0" bold="true" fontFamily="" fontSize="0.0" italic="true"
-                          kerning="0" letterSpaced="true" monospace="true" reverseVideo="true" serif="true"
-                          smallCaps="true" strikethrough="true" subscript="true" superscript="true" textColour="black"
-                          textColourRgb="0" underlined="true" xHeight="0"/>
         </pc:TextRegion>
     </pc:Page>
 </pc:PcGts>
