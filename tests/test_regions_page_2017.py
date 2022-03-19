@@ -23,7 +23,7 @@ def run_end_to_end_conversion(xml_path: str, json_path: str):
     :param json_path:
     :return:
     """
-    local_fixture_path: str = "/fixtures/page-xml/2017-07-15"
+    local_fixture_path: str = "/fixtures/page-xml/2017-07-15/region"
     document: Document = reader.handle_incoming_file(script_dir + local_fixture_path + xml_path)
     manual_json = read_json(script_dir + local_fixture_path + json_path)
     ddiff = DeepDiff(document.to_dict(), manual_json)
