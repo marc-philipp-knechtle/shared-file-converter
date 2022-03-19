@@ -275,7 +275,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
 
         document = self.handle_text_lines(document, text_region.TextLine, region_identification)
         document = self.handle_text_equiv(document, text_region.TextEquiv, region_identification)
-        document = self.handle_text_style(document, text_region.TextStyle)
+        document = self.handle_text_style(document, text_region.TextStyle, region_identification)
 
         return document
 
@@ -285,21 +285,8 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
 
     def _has_complex_subtype(self, text_region: TextRegionType) -> bool:
         length_of_all_types: int = self._len_plural_binding(
-            text_region.AdvertRegion) + self._len_plural_binding(
-            text_region.ChartRegion) + self._len_plural_binding(
-            text_region.ChemRegion) + self._len_plural_binding(
-            text_region.GraphicRegion) + self._len_plural_binding(
-            text_region.ImageRegion) + self._len_plural_binding(
-            text_region.LineDrawingRegion) + self._len_plural_binding(
-            text_region.MathsRegion) + self._len_plural_binding(
-            text_region.MusicRegion) + self._len_plural_binding(
-            text_region.NoiseRegion) + self._len_plural_binding(
-            text_region.SeparatorRegion) + self._len_plural_binding(
-            text_region.TableRegion) + self._len_plural_binding(
             text_region.TextEquiv) + self._len_plural_binding(
-            text_region.TextLine) + self._len_plural_binding(
-            text_region.TextRegion) + self._len_plural_binding(
-            text_region.UnknownRegion)
+            text_region.TextLine)
         return True if length_of_all_types != 0 else False
 
     @execute_if_present
@@ -351,8 +338,8 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return document
 
     @execute_if_present
-    def handle_text_style(self, document: Document, text_style: TextStyleType) -> Document:
-        region_ref = document.content[-1]
+    def handle_text_style(self, document: Document, text_style: TextStyleType,
+                          group_ref: Optional[GroupRef] = None) -> Document:
         metadata: dict = self._create_dict_if_present(fontFamily=text_style.fontFamily,
                                                       serif=text_style.serif,
                                                       monospace=text_style.monospace,
@@ -372,7 +359,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
                                                       strikethrough=text_style.strikethrough,
                                                       smallCaps=text_style.smallCaps,
                                                       letterSpaced=text_style.letterSpaced)
-        self._execute_if_present(metadata, document.add_content_metadata, metadata, region_ref)
+        self._execute_if_present(metadata, document.add_content_metadata, metadata, group_ref)
         return document
 
     def handle_coords_type(self, coords: CoordsType) -> Sequence[Tuple[int, int]]:
