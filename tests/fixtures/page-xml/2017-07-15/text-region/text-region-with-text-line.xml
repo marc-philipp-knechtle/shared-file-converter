@@ -129,14 +129,6 @@
                                       type="xsd:string" value="some-user-defined-value"/>
                 </pc:UserDefined>
             </pc:TextLine>
-            <pc:TextEquiv comments="" conf="0.0" dataType="xsd:decimal" dataTypeDetails="" index="0">
-                <pc:PlainText>pc:PlainText</pc:PlainText>
-                <pc:Unicode>pc:Unicode</pc:Unicode>
-            </pc:TextEquiv>
-            <pc:TextStyle bgColour="black" bgColourRgb="0" bold="true" fontFamily="" fontSize="0.0" italic="true"
-                          kerning="0" letterSpaced="true" monospace="true" reverseVideo="true" serif="true"
-                          smallCaps="true" strikethrough="true" subscript="true" superscript="true" textColour="black"
-                          textColourRgb="0" underlined="true" xHeight="0"/>
         </pc:TextRegion>
     </pc:Page>
 </pc:PcGts>

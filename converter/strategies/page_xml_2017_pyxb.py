@@ -12,7 +12,8 @@ from converter.elements import PageConversionStrategy, ConverterDocument
 from converter.strategies.generated.page_xml.py_xb_2017 import PcGtsType, UserDefinedType, TextRegionType, CoordsType, \
     PointsType, TextLineType, BaselineType, TextEquivType, TextStyleType, PageType, LineDrawingRegionType, \
     GraphicRegionType, TableRegionType, ChartRegionType, SeparatorRegionType, MathsRegionType, \
-    ChemRegionType, MusicRegionType, AdvertRegionType, NoiseRegionType, UnknownRegionType, RegionType, ImageRegionType
+    ChemRegionType, MusicRegionType, AdvertRegionType, NoiseRegionType, UnknownRegionType, RegionType, \
+    ImageRegionType, UserAttributeType, WordType
 from docrecjson.elements import Document, PolygonRegion, GroupRef, DocumentElement
 
 
@@ -202,6 +203,10 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         original.shared_file_format_document = document
         return original
 
+    """
+    page xml element handling = type handling
+    """
+
     def handle_alternative_image(self, document: Document, alternative_image) -> Document:
         pass
 
@@ -217,8 +222,26 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
     def handle_layers(self, document: Document, layers) -> Document:
         pass
 
-    def handle_user_defined(self, document: Document, user_defined) -> Document:
-        pass
+    @execute_if_present
+    def handle_user_defined(self, document: Document, user_defined: UserDefinedType,
+                            group_ref: Optional[GroupRef] = None) -> Document:
+        user_attribute: UserAttributeType
+        for user_attribute in user_defined.UserAttribute:
+            metadata: dict = self._create_dict_if_present(name=user_attribute.name,
+                                                          description=user_attribute.description,
+                                                          type=user_attribute.type,
+                                                          value=user_attribute.value_)
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, group_ref)
+
+        return document
+
+    @execute_if_present
+    def handle_word(self, document: Document, words: _PluralBinding) -> Document:
+        word: WordType
+        for _ in words:
+            logger.warning("This conversion is currently not implemented.")
+            # todo: call: handle_glyph, handle_text_equiv, handle_text_style, handle_user_defined
+        return document
 
     """
     Text Region Handling
@@ -312,11 +335,10 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
                                                           comments=text_line.comments)
             self._execute_if_present(metadata, document.add_content_metadata, metadata, docobject)
 
-            # todo resolve these complex types
-            self._warn_if_present(text_line.Word, "word")
-            self._warn_if_present(text_line.TextEquiv, "textEquiv")
-            self._warn_if_present(text_line.TextStyle, "textStyle")
-            self._warn_if_present(text_line.UserDefined, "userDefined")
+            self.handle_word(document, text_line.Word)
+            self.handle_text_equiv(document, text_line.TextEquiv, docobject)
+            self.handle_text_style(document, text_line.TextStyle, document)
+            self.handle_user_defined(document, text_line.UserDefined, docobject)
 
         return document
 
@@ -371,7 +393,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return self._handle_points_type(coords.points)
 
     @execute_if_present
-    def handle_baseline_type(self, default_return, baseline: BaselineType):
+    def handle_baseline_type(self, default_return, baseline: BaselineType) -> Sequence[Tuple[int, int]]:
         return self._handle_points_type(baseline.points)
 
     """
