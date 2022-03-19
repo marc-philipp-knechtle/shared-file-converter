@@ -4,6 +4,7 @@ loguru
 lxml
 pyxb
 pytest
+deepdiff
 
 -e shared-file-format/python
 -e .

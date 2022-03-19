@@ -22,3 +22,6 @@ See the `--help` option for further help on how to run these scripts.
 * `scripts/convert-dir.py` to monitor a complete folder on new files. This script will run until you terminate
 it manually.  
 Please be aware that it will remove the files from the specifies directory.
+
+## Tests
+* run the tests via: `python -m pytest tests/`
