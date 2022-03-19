@@ -33,24 +33,27 @@ def run_end_to_end_conversion(xml_path: str, json_path: str):
 class TestImageRegion(TestCase):
 
     def test_simple_image_region(self):
-        run_end_to_end_conversion("/image-region/simple-image-region.xml", "/image-region/simple-image-region.json")
+        xml_filepath: str = "/image-region/simple-image-region.xml"
+        run_end_to_end_conversion(xml_filepath, xml_filepath + ".json")
 
     def test_nested_image_region(self):
-        run_end_to_end_conversion("/image-region/nested-image-region.xml", "/image-region/nested-image-region.json")
+        xml_filepath: str = "/image-region/nested-image-region.xml"
+        run_end_to_end_conversion(xml_filepath, xml_filepath + ".json")
 
 
 class TestTextRegion(TestCase):
     def test_simple_text_region(self):
-        run_end_to_end_conversion("/text-region/simple-text-region.xml", "/text-region/simple-text-region.json")
+        xml_filepath: str = "/text-region/simple-text-region.xml"
+        run_end_to_end_conversion(xml_filepath, xml_filepath + ".json")
 
     def test_text_region_with_text_equiv(self):
-        run_end_to_end_conversion("/text-region/text-region-with-text-equiv.xml",
-                                  "/text-region/text-region-with-text-equiv.json")
+        xml_filepath: str = "/text-region/text-region-with-text-equiv.xml"
+        run_end_to_end_conversion(xml_filepath, xml_filepath + ".json")
 
     def test_text_region_with_text_line(self):
-        run_end_to_end_conversion("/text-region/text-region-with-text-line.xml",
-                                  "/text-region/text-region-with-text-line.json")
+        xml_filepath: str = "/text-region/text-region-with-text-line.xml"
+        run_end_to_end_conversion(xml_filepath, xml_filepath + ".json")
 
     def test_text_region_with_text_style(self):
-        run_end_to_end_conversion("/text-region/text-region-with-text-style.xml",
-                                  "/text-region/text-region-with-text-style.json")
+        xml_filepath: str = "/text-region/text-region-with-text-style.xml"
+        run_end_to_end_conversion(xml_filepath, xml_filepath + ".json")
