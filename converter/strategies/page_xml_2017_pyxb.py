@@ -303,7 +303,6 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return True if length_of_all_types != 0 else False
 
     @execute_if_present
-    @recursive
     def handle_text_lines(self, document: Document, text_lines: _PluralBinding,
                           group_ref: Optional[GroupRef] = None) -> Document:
         text_line: TextLineType
