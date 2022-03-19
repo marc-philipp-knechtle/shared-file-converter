@@ -335,7 +335,6 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return document
 
     @execute_if_present
-    @recursive
     def handle_text_equiv(self, document: Document, text_equivs: _PluralBinding,
                           group_ref: Optional[GroupRef] = None) -> Document:
         text_equiv: TextEquivType
@@ -353,7 +352,6 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return document
 
     @execute_if_present
-    @recursive
     def handle_text_style(self, document: Document, text_style: TextStyleType) -> Document:
         region_ref = document.content[-1]
         metadata: dict = self._create_dict_if_present(fontFamily=text_style.fontFamily,
@@ -387,7 +385,6 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return self._handle_points_type(coords.points)
 
     @execute_if_present
-    @recursive
     def handle_baseline_type(self, default_return, baseline: BaselineType):
         return self._handle_points_type(baseline.points)
 
