@@ -48,27 +48,27 @@ class ConversionStrategy(ABC):
 
 class PageConversionStrategy(ConversionStrategy, ABC):
     @abstractmethod
-    def handle_alternative_image(self, document: Document, alternative_image) -> Document:
+    def handle_alternative_image_type(self, document: Document, alternative_image) -> Document:
         pass
 
     @abstractmethod
-    def handle_border(self, document: Document, border) -> Document:
+    def handle_border_type(self, document: Document, border) -> Document:
         pass
 
     @abstractmethod
-    def handle_print_space(self, document: Document, print_space) -> Document:
+    def handle_print_space_type(self, document: Document, print_space) -> Document:
         pass
 
     @abstractmethod
-    def handle_reading_order(self, document: Document, reading_order) -> Document:
+    def handle_reading_order_type(self, document: Document, reading_order) -> Document:
         pass
 
     @abstractmethod
-    def handle_layers(self, document: Document, layers) -> Document:
+    def handle_layers_type(self, document: Document, layers) -> Document:
         pass
 
     @abstractmethod
-    def handle_user_defined(self, document: Document, user_defined) -> Document:
+    def handle_user_defined_type(self, document: Document, user_defined) -> Document:
         pass
 
     # handle regions

@@ -207,24 +207,24 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
     page xml element handling = type handling
     """
 
-    def handle_alternative_image(self, document: Document, alternative_image) -> Document:
+    def handle_alternative_image_type(self, document: Document, alternative_image) -> Document:
         pass
 
-    def handle_border(self, document: Document, border) -> Document:
+    def handle_border_type(self, document: Document, border) -> Document:
         pass
 
-    def handle_print_space(self, document: Document, print_space) -> Document:
+    def handle_print_space_type(self, document: Document, print_space) -> Document:
         pass
 
-    def handle_reading_order(self, document: Document, reading_order) -> Document:
+    def handle_reading_order_type(self, document: Document, reading_order) -> Document:
         pass
 
-    def handle_layers(self, document: Document, layers) -> Document:
+    def handle_layers_type(self, document: Document, layers) -> Document:
         pass
 
     @execute_if_present
-    def handle_user_defined(self, document: Document, user_defined: UserDefinedType,
-                            group_ref: Optional[GroupRef] = None) -> Document:
+    def handle_user_defined_type(self, document: Document, user_defined: UserDefinedType,
+                                 group_ref: Optional[GroupRef] = None) -> Document:
         user_attribute: UserAttributeType
         for user_attribute in user_defined.UserAttribute:
             metadata: dict = self._create_dict_if_present(name=user_attribute.name,
@@ -236,7 +236,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         return document
 
     @execute_if_present
-    def handle_word(self, document: Document, words: _PluralBinding) -> Document:
+    def handle_word_type(self, document: Document, words: _PluralBinding) -> Document:
         word: WordType
         for _ in words:
             logger.warning("This conversion is currently not implemented.")
@@ -335,10 +335,10 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
                                                           comments=text_line.comments)
             self._execute_if_present(metadata, document.add_content_metadata, metadata, docobject)
 
-            self.handle_word(document, text_line.Word)
+            self.handle_word_type(document, text_line.Word)
             self.handle_text_equiv(document, text_line.TextEquiv, docobject)
             self.handle_text_style(document, text_line.TextStyle, document)
-            self.handle_user_defined(document, text_line.UserDefined, docobject)
+            self.handle_user_defined_type(document, text_line.UserDefined, docobject)
 
         return document
 
