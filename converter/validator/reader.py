@@ -2,6 +2,7 @@ import os
 from enum import unique, Enum
 from pathlib import Path
 
+import pyxb
 from lxml import etree
 
 from converter.elements import *
@@ -70,6 +71,10 @@ class AbstractIncomingFileHandler(IncomingFileHandler):
             logger.error("The read file [" + request + "] did not match any of the possible files.\n"
                                                        "Possible options are: [" + str(list(SupportedTypes)) + "]")
 
+    @abstractmethod
+    def handle_with_force(self, request: str) -> Document:
+        pass
+
 
 class PageXML2019Handler(AbstractIncomingFileHandler):
     _TYPE: SupportedTypes = SupportedTypes.PAGE_XML_2019
@@ -83,6 +88,9 @@ class PageXML2019Handler(AbstractIncomingFileHandler):
             logger.info("[" + request + "] validated successfully for [" + self._TYPE.name + "]")
         else:
             return super().handle(request)
+
+    def handle_with_force(self, request: str) -> Document:
+        pass
 
 
 class PageXML2017Handler(AbstractIncomingFileHandler):
@@ -103,9 +111,35 @@ class PageXML2017Handler(AbstractIncomingFileHandler):
         else:
             return super().handle(request)
 
+    def handle_with_force(self, request: str) -> Document:
+        logger.info("[" + request + "] was forced to be processed with [ " + self._TYPE.name + "]")
+        xml: str = read_xml(request)
+        try:
+            tmp_conversion_type = py_xb_2017.CreateFromDocument(xml)
+        except pyxb.UnrecognizedContentError as e:
+            logger.error("ERROR converting given document!")
+            logger.error(e.details())
+            pyxb.RequireValidWhenParsing(False)
+            tmp_conversion_type = py_xb_2017.CreateFromDocument(xml)
+
+        converter_document: ConverterDocument = ConverterDocument(filepath=request, original=xml,
+                                                                  tmp_type=tmp_conversion_type)
+        context = ConversionContext(self._TYPE.value, converter_document)
+        return context.convert()
+
 
 def handle_incoming_file(filepath: str) -> Document:
     logger.info("Start processing on: [" + filepath + "]")
     page_xml_2019 = PageXML2019Handler()
     page_xml_2019.set_next(PageXML2017Handler())
     return page_xml_2019.handle(filepath)
+
+
+def handle_force_incoming_file(filepath: str, force_arg: str) -> Document:
+    if force_arg == "page2019":
+        page_xml_2017 = PageXML2017Handler()
+        return page_xml_2017.handle_with_force(filepath)
+    else:
+        raise ValueError(
+            "The specified forced strategy does not match the available strategies. "
+            "Please look at the --help output for further information.")

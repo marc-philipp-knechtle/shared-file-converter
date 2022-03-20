@@ -1,9 +1,11 @@
 import json
 import os
 from argparse import Namespace
+from typing import Union
 
 from loguru import logger
 
+from converter.validator.reader import handle_incoming_file, handle_force_incoming_file
 from database.db import JsonDBStorage
 from docrecjson.elements import Document
 
@@ -42,3 +44,12 @@ def file_considered_duplicates(filepath: str) -> str:
         filepath = os.path.join(base_filepath + " (" + str(counter) + ")")
         counter += 1
     return filepath + file_extension
+
+
+def handle_incoming_file_with_optional_force(input_filepath: str, force_strategy: Union[str, None]) -> Document:
+    if force_strategy is None:
+        return handle_incoming_file(input_filepath)
+    elif isinstance(force_strategy, str):
+        return handle_force_incoming_file(input_filepath, force_strategy)
+    else:
+        raise ValueError("The specified strategy has to be either str or None for no forced strategy.")

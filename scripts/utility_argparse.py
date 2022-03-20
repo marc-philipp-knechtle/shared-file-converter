@@ -24,3 +24,13 @@ def add_log_args(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
     parser.add_argument("-log", "--log_output", type=bool, default=False,
                         help="Info-logs the computed json-dict file.")
     return parser
+
+
+def add_force_args(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
+    parser.add_argument("-f", "--force_strategy", type=str,
+                        help="This argument overrides the file matcher and validator to a already specified strategy."
+                             "Please be aware that skipping those steps in the conversion process may lead to "
+                             "unintended errors. Available options are:"
+                             "page2019",
+                        default=None)
+    return parser

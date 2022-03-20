@@ -31,6 +31,8 @@ def execute_if_present(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         if type(args[2]) == _PluralBinding:
+            # if the _PluralBinding element has any more elements than 0, it's assumed that there are contents
+            # present which have to be processed.
             if len(args[2]) != 0:
                 return func(*args, **kwargs)
             else:
@@ -441,6 +443,11 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         :param coords:
         :return:
         """
+        if coords is None:
+            logger.warning("The given coords were None."
+                           "This is very likely to originate from an unvalidated file."
+                           "Please review whether your elements have coord points specified when necessary.")
+            return []
         return self._handle_points_type(coords.points)
 
     @execute_if_present

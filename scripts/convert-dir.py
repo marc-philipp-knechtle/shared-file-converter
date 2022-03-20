@@ -5,7 +5,6 @@ from argparse import Namespace
 
 from loguru import logger
 
-from converter.validator.reader import handle_incoming_file
 from database.db import JsonDBStorage
 from docrecjson.elements import Document
 from scripts import utility
@@ -25,6 +24,7 @@ def parse_arguments() -> Namespace:
     parser.add_argument("-o", "--output_dir", type=str,
                         help="If you specify this directory, the converted files will be written into this dir.",
                         default=None)
+    parser = add_force_args(parser)
     parser = add_db_args(parser)
     parser = add_log_args(parser)
     return parser.parse_args()
@@ -57,7 +57,12 @@ def monitor_input_dir(args, db, input_dir):
 def handle_file_in_input_dir(args, db, filename, input_dir):
     filepath = os.path.join(input_dir, filename)
 
-    doc: Document = handle_incoming_file(filepath)
+    doc: Document = utility.handle_incoming_file_with_optional_force(filepath, args.force_strategy)
+
+    if doc is None:
+        raise RuntimeError("You specified a document which was not possible to convert."
+                           "The converter returned None for this document."
+                           "Please verify that you created a valid document.")
 
     write(args, db, doc, filename)
     remove_input_file(filepath)

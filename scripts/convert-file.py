@@ -3,7 +3,6 @@ from argparse import Namespace
 
 from loguru import logger
 
-from converter.validator.reader import handle_incoming_file
 from database.db import JsonDBStorage
 from docrecjson.elements import Document
 from scripts import utility
@@ -23,6 +22,7 @@ def parse_arguments() -> Namespace:
                              "Please note that all convent of this file will be deleted. "
                              "This has to be specified if there is no mongo database connection specified.",
                         default=None)
+    parser = add_force_args(parser)
     parser = add_db_args(parser)
     parser = add_log_args(parser)
     return parser.parse_args()
@@ -39,7 +39,12 @@ def main(args: Namespace):
     output_filepath: str = args.output_file
     log_output: bool = args.log_output
 
-    doc: Document = handle_incoming_file(input_filepath)
+    doc: Document = utility.handle_incoming_file_with_optional_force(input_filepath, args.force_strategy)
+
+    if doc is None:
+        raise RuntimeError("You specified a document which was not possible to convert."
+                           "The converter returned None for this document."
+                           "Please verify that you created a valid document.")
 
     utility.write_to_log(log_output, doc)
     utility.write_to_db(args, doc, JsonDBStorage(args.db_connection, args.db_database, args.db_collection))
