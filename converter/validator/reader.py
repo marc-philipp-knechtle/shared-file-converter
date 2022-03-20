@@ -136,7 +136,7 @@ def handle_incoming_file(filepath: str) -> Document:
 
 
 def handle_force_incoming_file(filepath: str, force_arg: str) -> Document:
-    if force_arg == "page2019":
+    if force_arg == "page2017":
         page_xml_2017 = PageXML2017Handler()
         return page_xml_2017.handle_with_force(filepath)
     else:

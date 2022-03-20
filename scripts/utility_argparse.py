@@ -31,6 +31,6 @@ def add_force_args(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
                         help="This argument overrides the file matcher and validator to a already specified strategy."
                              "Please be aware that skipping those steps in the conversion process may lead to "
                              "unintended errors. Available options are:"
-                             "page2019",
+                             "page2017",
                         default=None)
     return parser
