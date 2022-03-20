@@ -22,7 +22,7 @@ def write_to_file(filepath: str, dct: dict):
     if filepath is not None:
         path_considered_duplicates: str = file_considered_duplicates(filepath)
         with open(path_considered_duplicates, "w") as file:
-            json.dump(dct, file)
+            json.dump(dct, file, indent=2)
             logger.info("wrote processed contents into: [" + filepath + "]")
 
 
