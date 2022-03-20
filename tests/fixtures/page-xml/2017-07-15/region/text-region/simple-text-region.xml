@@ -16,37 +16,6 @@
     <pc:Page custom="" imageFilename="" imageHeight="0" imageWidth="0" primaryLanguage="Abkhaz"
              primaryScript="Adlm - Adlam" readingDirection="left-to-right" secondaryLanguage="Abkhaz"
              secondaryScript="Adlm - Adlam" textLineOrder="top-to-bottom" type="front-cover">
-        <pc:AlternativeImage comments="" filename=""/>
-        <pc:Border>
-            <pc:Coords points="123,456 123,456"/>
-        </pc:Border>
-        <pc:PrintSpace>
-            <pc:Coords points="123,456 123,456"/>
-        </pc:PrintSpace>
-        <pc:ReadingOrder>
-            <pc:OrderedGroup caption="" comments="" continuation="true" custom="" id="idvalue1" regionRef="idvalue0"
-                             type="paragraph">
-                <pc:UserDefined>
-                    <pc:UserAttribute description="" name="" type="xsd:string" value=""/>
-                </pc:UserDefined>
-                <pc:RegionRefIndexed index="0" regionRef="idvalue0"/>
-            </pc:OrderedGroup>
-        </pc:ReadingOrder>
-        <pc:Layers>
-            <pc:Layer caption="" id="idvalue2" zIndex="0">
-                <pc:RegionRef regionRef="idvalue0"/>
-            </pc:Layer>
-        </pc:Layers>
-        <pc:Relations>
-            <pc:Relation comments="" custom="" type="link">
-                <pc:RegionRef regionRef="idvalue0"/>
-                <pc:RegionRef regionRef="idvalue0"/>
-            </pc:Relation>
-        </pc:Relations>
-        <pc:UserDefined>
-            <pc:UserAttribute description="some-user-defined-description" name="some-user-defined-name"
-                              type="xsd:string" value="some-user-defined-value"/>
-        </pc:UserDefined>
         <pc:TextRegion align="left" comments="some textRegionComments" continuation="true" custom="custom" id="idvalue3"
                        indented="true" leading="0"
                        orientation="0.0" primaryLanguage="Abkhaz" primaryScript="Adlm - Adlam" production="printed"
