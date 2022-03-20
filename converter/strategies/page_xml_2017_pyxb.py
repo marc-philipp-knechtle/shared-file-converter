@@ -13,7 +13,8 @@ from converter.strategies.generated.page_xml.py_xb_2017 import PcGtsType, UserDe
     PointsType, TextLineType, BaselineType, TextEquivType, TextStyleType, PageType, LineDrawingRegionType, \
     GraphicRegionType, TableRegionType, ChartRegionType, SeparatorRegionType, MathsRegionType, \
     ChemRegionType, MusicRegionType, AdvertRegionType, NoiseRegionType, UnknownRegionType, RegionType, \
-    ImageRegionType, UserAttributeType, WordType
+    ImageRegionType, UserAttributeType, WordType, AlternativeImageType, BorderType, PrintSpaceType, ReadingOrderType, \
+    LayersType, RelationsType
 from docrecjson.elements import Document, PolygonRegion, GroupRef, DocumentElement
 
 
@@ -189,6 +190,11 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
                                  self._create_user_defined_metadata(pyxb_object.Metadata.UserDefined))
         self._execute_if_present(pyxb_object.Metadata.externalRef, document.add_metadata,
                                  {"externalRef": str(pyxb_object.Metadata.externalRef)})
+        document = self.handle_alternative_image_type(document, pyxb_object.Page.AlternativeImage)
+        document = self.handle_reading_order_type(document, pyxb_object.Page.ReadingOrder)
+        document = self.handle_layers_type(document, pyxb_object.Page.Layers)
+        document = self.handle_relations_type(document, pyxb_object.Page.Relations)
+        document = self.handle_user_defined_type(document, pyxb_object.Page.UserDefined)
 
         original.shared_file_format_document = document
         return original
@@ -198,6 +204,8 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         page: PageType = pyxb_object.Page
         document: Document = original.shared_file_format_document
 
+        document = self.handle_border_type(document, page.Border)
+        document = self.handle_print_space_type(document, page.PrintSpace)
         document = self.add_region_content(document, page)
 
         original.shared_file_format_document = document
@@ -207,20 +215,55 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
     page xml element handling = type handling
     """
 
-    def handle_alternative_image_type(self, document: Document, alternative_image) -> Document:
-        pass
+    @execute_if_present
+    def handle_alternative_image_type(self, document: Document, alternative_images: _PluralBinding) -> Document:
+        alternative_image: AlternativeImageType
+        for alternative_image in alternative_images:
+            metadata: dict = self._create_dict_if_present(alternativeImage=alternative_image.filename,
+                                                          comments=alternative_image.comments)
+            self._execute_if_present(metadata, document.add_metadata, metadata)
+        return document
 
-    def handle_border_type(self, document: Document, border) -> Document:
-        pass
+    @execute_if_present
+    def handle_border_type(self, document: Document, border: BorderType) -> Document:
+        """
+        Border of the actual page (if the scanned image contains parts not belonging to the page)
+        see reference of page xml xsd schema
+        """
+        coordinates = self._handle_points_type(border.Coords.points)
+        document.add_region(area=coordinates, region_type="border")
+        return document
 
-    def handle_print_space_type(self, document: Document, print_space) -> Document:
-        pass
+    @execute_if_present
+    def handle_print_space_type(self, document: Document, print_space: PrintSpaceType) -> Document:
+        coordinates = self._handle_points_type(print_space.Coords.points)
+        document.add_region(area=coordinates, region_type="printSpace")
+        return document
 
-    def handle_reading_order_type(self, document: Document, reading_order) -> Document:
-        pass
+    @execute_if_present
+    def handle_reading_order_type(self, document: Document, reading_order: ReadingOrderType) -> Document:
+        logger.warning(
+            "This is currently not implemented in the used json shared-file-format. Please find a manual solution.")
+        return document
 
-    def handle_layers_type(self, document: Document, layers) -> Document:
-        pass
+    @execute_if_present
+    def handle_layers_type(self, document: Document, layers: LayersType) -> Document:
+        """
+        Can be used to express the z-index of overlapping regions.
+        An element with a greater z-index is always in front of another element with lower z-index.
+        see reference of page xml xsd schema
+        """
+        logger.warning(
+            "This is currently not implemented in the used json shared-file-format. Please find a manual solution.")
+        return document
+
+    @execute_if_present
+    def handle_relations_type(self, document: Document, relations: RelationsType):
+        """
+        Container for one-to-one relations between layout objects (for example: DropCap - paragraph, caption - image)
+        """
+        logger.warning("This is currently not implemented. Please find a manual solution.")
+        return document
 
     @execute_if_present
     def handle_user_defined_type(self, document: Document, user_defined: UserDefinedType,
@@ -231,7 +274,11 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
                                                           description=user_attribute.description,
                                                           type=user_attribute.type,
                                                           value=user_attribute.value_)
-            self._execute_if_present(metadata, document.add_content_metadata, metadata, group_ref)
+            if group_ref is None:
+                # assumption, that this is global metadata if there isn't a group specified
+                self._execute_if_present(metadata, document.add_metadata, metadata)
+            else:
+                self._execute_if_present(metadata, document.add_content_metadata, metadata, group_ref)
 
         return document
 
