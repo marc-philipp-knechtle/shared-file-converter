@@ -151,6 +151,11 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
             points_shared_file_format.append(point)
         return points_shared_file_format
 
+    # noinspection PyMethodMayBeStatic
+    def _get_unvalidated_error_msg(self, element_name: str) -> str:
+        return "Given " + element_name + " was None. " \
+                                         "This is very likely to originate from an unvalidated file."
+
     def add_region_content(self, document, parent) -> Document:
         document = self.handle_text_regions(document, parent.TextRegion)
         document = self.handle_image_region(document, parent.ImageRegion)
@@ -171,7 +176,12 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         pyxb_object: PcGtsType = original.tmp_type
         document: Document = Document.empty(pyxb_object.Page.imageFilename,
                                             (pyxb_object.Page.imageHeight, pyxb_object.Page.imageWidth))
-        document.add_creator(pyxb_object.Metadata.Creator, "2017-07-15")
+        if pyxb_object.Metadata is None:
+            logger.warning(self._get_unvalidated_error_msg("metadata"))
+            document.add_creator("PAGE XML", "2017-07-15")
+        else:
+            document.add_creator(pyxb_object.Metadata.Creator, "2017-07-15")
+
         document.add_creator("shared-file-converter", str(date.today()))
         original.shared_file_format_document = document
 
@@ -185,13 +195,18 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
         pyxb_object: PcGtsType = original.tmp_type
         document: Document = original.shared_file_format_document
 
-        document.add_metadata({"LastChange": str(pyxb_object.Metadata.LastChange)})
-        self._execute_if_present(pyxb_object.Metadata.Comments, document.add_metadata,
-                                 {"Comments": str(pyxb_object.Metadata.Comments)})
-        self._execute_if_present(pyxb_object.Metadata.UserDefined, document.add_metadata,
-                                 self._create_user_defined_metadata(pyxb_object.Metadata.UserDefined))
-        self._execute_if_present(pyxb_object.Metadata.externalRef, document.add_metadata,
-                                 {"externalRef": str(pyxb_object.Metadata.externalRef)})
+        if pyxb_object.Metadata is None:
+            logger.warning(self._get_unvalidated_error_msg("metadata"))
+        else:
+            self._execute_if_present(pyxb_object.Metadata.LastChange, document.add_metadata,
+                                     {"LastChange": str(pyxb_object.Metadata.LastChange)})
+            self._execute_if_present(pyxb_object.Metadata.Comments, document.add_metadata,
+                                     {"Comments": str(pyxb_object.Metadata.Comments)})
+            self._execute_if_present(pyxb_object.Metadata.UserDefined, document.add_metadata,
+                                     self._create_user_defined_metadata(pyxb_object.Metadata.UserDefined))
+            self._execute_if_present(pyxb_object.Metadata.externalRef, document.add_metadata,
+                                     {"externalRef": str(pyxb_object.Metadata.externalRef)})
+
         document = self.handle_alternative_image_type(document, pyxb_object.Page.AlternativeImage)
         document = self.handle_reading_order_type(document, pyxb_object.Page.ReadingOrder)
         document = self.handle_layers_type(document, pyxb_object.Page.Layers)
