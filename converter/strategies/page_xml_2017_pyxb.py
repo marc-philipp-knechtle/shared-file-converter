@@ -408,7 +408,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
 
             self.handle_word_type(document, text_line.Word)
             self.handle_text_equiv(document, text_line.TextEquiv, docobject)
-            self.handle_text_style(document, text_line.TextStyle, document)
+            self.handle_text_style(document, text_line.TextStyle, docobject)
             self.handle_user_defined_type(document, text_line.UserDefined, docobject)
 
         return document
