@@ -64,6 +64,7 @@
     {
       "oid": 7,
       "data": {
+        "originalId": "textlineid",
         "primaryLanguage": "Abkhaz",
         "primaryScript": "Adlm - Adlam",
         "secondaryScript": "Adlm - Adlam",
@@ -73,6 +74,7 @@
         "comments": "comments"
       },
       "group": 1,
+      "parent_oid": 6,
       "otype": "meta"
     },
     {
@@ -92,6 +94,7 @@
         "comments": "comments"
       },
       "group": 2,
+      "parent_oid": 8,
       "otype": "meta"
     },
     {
@@ -106,6 +109,8 @@
         "bgColour": "black",
         "bgColourRgb": 123123
       },
+      "group": 1,
+      "parent_oid": 6,
       "otype": "meta"
     },
     {
@@ -122,6 +127,7 @@
     {
       "oid": 12,
       "data": {
+        "originalId": "idvalue3",
         "align": "left",
         "comments": "some textRegionComments",
         "continuation": 1,
@@ -134,6 +140,7 @@
         "textLineOrder": "top-to-bottom"
       },
       "group": 1,
+      "parent_oid": 11,
       "otype": "meta"
     }
   ],
@@ -144,7 +151,7 @@
     },
     {
       "name": "shared-file-converter",
-      "version": "2022-03-20"
+      "version": "2022-03-21"
     }
   ]
 }

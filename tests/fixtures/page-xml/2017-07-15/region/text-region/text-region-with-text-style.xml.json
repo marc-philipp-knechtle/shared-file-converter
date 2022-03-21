@@ -61,6 +61,7 @@
     {
       "oid": 6,
       "data": {
+        "originalId": "idvalue3",
         "align": "left",
         "comments": "some textRegionComments",
         "continuation": 1,
@@ -73,6 +74,7 @@
         "textLineOrder": "top-to-bottom"
       },
       "group": 1,
+      "parent_oid": 5,
       "otype": "meta"
     }
   ],
@@ -83,7 +85,7 @@
     },
     {
       "name": "shared-file-converter",
-      "version": "2022-03-20"
+      "version": "2022-03-21"
     }
   ]
 }
