@@ -26,7 +26,8 @@ def run_end_to_end_conversion(xml_path: str, json_path: str):
     local_fixture_path: str = "/fixtures/page-xml/2017-07-15/region"
     document: Document = reader.handle_incoming_file(script_dir + local_fixture_path + xml_path)
     manual_json = read_json(script_dir + local_fixture_path + json_path)
-    ddiff = DeepDiff(document.to_dict(), manual_json)
+    # .pop("creators") is necessary, because this application adds the current date as the last creator.
+    ddiff = DeepDiff(document.to_dict().pop("creators"), manual_json.pop("creators"), ignore_order=True)
     assert ddiff == {}
 
 

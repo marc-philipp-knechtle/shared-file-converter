@@ -452,7 +452,8 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
                                                       strikethrough=text_style.strikethrough,
                                                       smallCaps=text_style.smallCaps,
                                                       letterSpaced=text_style.letterSpaced)
-        self._execute_if_present(metadata, document.add_content_metadata, metadata, group_ref, group_ref.oid)
+        parent_id = None if group_ref is None else group_ref.oid
+        self._execute_if_present(metadata, document.add_content_metadata, metadata, group_ref, parent_id)
         return document
 
     def handle_coords_type(self, coords: CoordsType) -> Sequence[Tuple[int, int]]:
