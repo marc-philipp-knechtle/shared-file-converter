@@ -330,7 +330,8 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
                 # -> it's added to document engine as text content
                 document = self._handle_simple_text_region_type(document, text_region)
 
-            metadata: dict = self._create_dict_if_present(align=text_region.align,
+            metadata: dict = self._create_dict_if_present(originalId=text_region.id,
+                                                          align=text_region.align,
                                                           comments=text_region.comments,
                                                           continuation=text_region.continuation,
                                                           custom=text_region.custom,
@@ -346,7 +347,8 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
                                                           textLineOrder=text_region.textLineOrder)
             if document.content[-1].group is None:
                 document.add_group(document.content[-1])
-            self._execute_if_present(metadata, document.add_content_metadata, metadata, document.content[-1].group)
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, document.content[-1].group,
+                                     document.content[-1].oid)
 
         return document
 
@@ -394,14 +396,15 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
             if len(baseline_points) != 0:
                 docobject = document.add_baseline(points, group_ref)
 
-            metadata: dict = self._create_dict_if_present(primaryLanguage=text_line.primaryLanguage,
+            metadata: dict = self._create_dict_if_present(originalId=text_line.id,
+                                                          primaryLanguage=text_line.primaryLanguage,
                                                           primaryScript=text_line.primaryScript,
                                                           secondaryScript=text_line.secondaryScript,
                                                           readingDirection=text_line.readingDirection,
                                                           production=text_line.production,
                                                           custom=text_line.custom,
                                                           comments=text_line.comments)
-            self._execute_if_present(metadata, document.add_content_metadata, metadata, docobject)
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, docobject, docobject.oid)
 
             self.handle_word_type(document, text_line.Word)
             self.handle_text_equiv(document, text_line.TextEquiv, docobject)
@@ -423,7 +426,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
                                                           dataType=text_equiv.dataType,
                                                           dataTypeDetails=text_equiv.dataTypeDetails,
                                                           comments=text_equiv.comments)
-            self._execute_if_present(metadata, document.add_content_metadata, metadata, region)
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, region, region.oid)
 
         return document
 
@@ -449,7 +452,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
                                                       strikethrough=text_style.strikethrough,
                                                       smallCaps=text_style.smallCaps,
                                                       letterSpaced=text_style.letterSpaced)
-        self._execute_if_present(metadata, document.add_content_metadata, metadata, group_ref)
+        self._execute_if_present(metadata, document.add_content_metadata, metadata, group_ref, group_ref.oid)
         return document
 
     def handle_coords_type(self, coords: CoordsType) -> Sequence[Tuple[int, int]]:
@@ -511,7 +514,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
                                                           colourDepth=image_region.colourDepth,
                                                           bgColour=image_region.bgColour,
                                                           embText=image_region.embText)
-            self._execute_if_present(metadata, document.add_content_metadata, metadata, region)
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, region, region.oid)
 
             # todo what elements need to be added to the recursive functionality to remove this behaviour
             self._warn_region_parent_elements(image_region)
@@ -530,7 +533,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
                                                           penColour=line_drawing_region.penColour,
                                                           bgColour=line_drawing_region.bgColour,
                                                           embText=line_drawing_region.embText)
-            self._execute_if_present(metadata, document.add_content_metadata, metadata, region)
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, region, region.oid)
 
             self._warn_region_parent_elements(line_drawing_region)
 
@@ -548,7 +551,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
                                                           type=graphic_region.type,
                                                           numColours=graphic_region.numColours,
                                                           embText=graphic_region.embText)
-            self._execute_if_present(metadata, document.add_content_metadata, metadata, region)
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, region, region.oid)
 
             self._warn_region_parent_elements(graphic_region)
 
@@ -569,7 +572,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
                                                           bgColour=table_region.bgColour,
                                                           lineSeparators=table_region.lineSeparators,
                                                           embText=table_region.embText)
-            self._execute_if_present(metadata, document.add_content_metadata, metadata, region)
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, region, region.oid)
 
             self._warn_region_parent_elements(table_region)
         return document
@@ -587,7 +590,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
                                                           numColours=chart_region.numColours,
                                                           bgColour=chart_region.bgColour,
                                                           embText=chart_region.embText)
-            self._execute_if_present(metadata, document.add_content_metadata, metadata, region)
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, region, region.oid)
 
             self._warn_region_parent_elements(chart_region)
 
@@ -603,7 +606,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
 
             metadata: dict = self._create_dict_if_present(orientation=separator_region.orientation,
                                                           colour=separator_region.colour)
-            self._execute_if_present(metadata, document.add_content_metadata, metadata, region)
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, region, region.oid)
 
             self._warn_region_parent_elements(separator_region)
         return document
@@ -618,7 +621,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
 
             metadata: dict = self._create_dict_if_present(orientation=maths_region.orientation,
                                                           bgColour=maths_region.bgColour)
-            self._execute_if_present(metadata, document.add_content_metadata, metadata, region)
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, region, region.oid)
 
             self._warn_region_parent_elements(maths_region)
         return document
@@ -633,7 +636,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
 
             metadata: dict = self._create_dict_if_present(orientation=chem_region.orientation,
                                                           bgColour=chem_region.bgColour)
-            self._execute_if_present(metadata, document.add_content_metadata, metadata, region)
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, region, region.oid)
 
             self._warn_region_parent_elements(chem_region)
         return document
@@ -648,7 +651,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
 
             metadata: dict = self._create_dict_if_present(orientation=music_region.orientation,
                                                           bgColour=music_region.bgColour)
-            self._execute_if_present(metadata, document.add_content_metadata, metadata, region)
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, region, region.oid)
 
             self._warn_region_parent_elements(music_region)
         return document
@@ -663,7 +666,7 @@ class PageXML2017StrategyPyXB(PageConversionStrategy):
 
             metadata: dict = self._create_dict_if_present(orientation=advert_region.orientation,
                                                           bgColour=advert_region.bgColour)
-            self._execute_if_present(metadata, document.add_content_metadata, metadata, region)
+            self._execute_if_present(metadata, document.add_content_metadata, metadata, region, region.oid)
 
             self._warn_region_parent_elements(advert_region)
         return document
